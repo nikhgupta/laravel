@@ -6,7 +6,7 @@ require "pathname"
 bin_file = Pathname.new(__FILE__).realpath
 
 # add self to libpath
-$:.unshift File.expand_path("../../lib", bin_file)
+$:.unshift File.expand_path(File.join(%w[ .. .. lib]), bin_file)
 
 require "laravel"
 require "thor"

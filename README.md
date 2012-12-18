@@ -8,7 +8,8 @@ Still in development.
 
 [![Code
 Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nikhgupta/laravel)
-
+| [![Dependency
+Status](https://gemnasium.com/nikhgupta/laravel.png)](https://gemnasium.com/nikhgupta/laravel) | [![Build Status](https://travis-ci.org/nikhgupta/laravel.png?branch=master)](https://travis-ci.org/nikhgupta/laravel)
 ## Installation
 
 Add this line to your application's Gemfile:
