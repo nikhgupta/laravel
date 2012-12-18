@@ -1,7 +1,6 @@
-require "laravel/version"
+# Stats of how many Laravel installations have been performed
+# Generators
 
-module Laravel
-  class Hello
-    puts "Hello World!\n I am still prepping up myself.. Stay tuned!"
-  end
-end
+require "laravel/info"
+require "laravel/helpers"
+require "laravel/download"
