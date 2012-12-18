@@ -61,14 +61,16 @@ module Laravel
       git = `which git`.strip
 
       # string which will suppress the output of commands in quiet mode
-      quiet = options[:quiet] ? "&>/dev/null" : ""
+      quiet = options[:quiet] ? "&>/dev/null" : "1>/dev/null"
 
       # update or download the remote repository
       FileUtils.mkdir_p local_path_for_remote_repo
       Dir.chdir local_path_for_remote_repo do
         if Laravel::local_repository_exists?(remote_repo)
+          puts "Updating repository in local cache.." unless options[:quiet]
           puts `#{git} pull #{quiet}`
         else
+          puts "Downloading repository to local cache.." unless options[:quiet]
           puts `#{git} clone #{remote_repo} . #{quiet}`
         end
       end

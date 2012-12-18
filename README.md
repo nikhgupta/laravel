@@ -1,7 +1,13 @@
 # Laravel
 
 A wrapper around Laravel framework for PHP.  
+Currently, is only capable of downloading Laravel source from
+a local directory, some git based (online/offline) repository
+or from the official source on Github.  
 Still in development.
+
+[![Code
+Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nikhgupta/laravel)
 
 ## Installation
 
@@ -33,7 +39,7 @@ source, you can create new Laravel application based on your own or someone
 else's fork of Laravel, if required. And, yes! These repositories will be
 cached!
 
-    # with default settings (fetches from http://github.com/laravel/laravel.git"
+    # with default settings (fetches source from http://github.com/laravel/laravel.git)
     laravel new my_app
     
     # force a clean install on existing directory

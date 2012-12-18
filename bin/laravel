@@ -1,9 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 
-# TODO: write functions docs
-# TODO: write option descriptions
-
 # resolve bin path, ignoring symlinks
 require "pathname"
 bin_file = Pathname.new(__FILE__).realpath
@@ -31,10 +28,12 @@ module Laravel
 
     # create a new laravel application
     desc "new [MY_APP]", "install a new Laravel application"
-    method_option :local,  :type => :boolean, :aliases => "-l"
-    method_option :remote, :type => :string,  :aliases => "-r", :banner => "GIT_REPO"
-    method_option :force,  :type => :boolean, :aliases => "-f"
-    method_option :quiet,  :type => :boolean, :aliases => "-q"
+    method_option :local,  :type => :string, :aliases => "-l", :banner => "DIRECTORY",
+      :desc => "use laravel source from a local directory"
+    method_option :remote, :type => :string,  :aliases => "-r", :banner => "GIT_REPO",
+      :desc => "use this git repository instead (useful when working with forks, e.g.)"
+    method_option :force,  :type => :boolean, :aliases => "-f",
+      :desc => "force overwrite"
     def new(app_name)
       result = Laravel::Download::source app_name, options
       if result
@@ -43,7 +42,6 @@ module Laravel
         say_status "Success", "Application Downloaded Successfully!"
       end
     end
-
 
     # choose a default task to run
     default_task :info
