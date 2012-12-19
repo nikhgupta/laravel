@@ -40,17 +40,26 @@ source, you can create new Laravel application based on your own or someone
 else's fork of Laravel, if required. And, yes! These repositories will be
 cached!
 
-    # with default settings (fetches source from http://github.com/laravel/laravel.git)
+    # use default settings (fetches source from http://github.com/laravel/laravel.git)
     laravel new my_app
     
     # force a clean install on existing directory
     laravel new my_app --force
     
-    # using an existing (already downloaded) source
+    # use an existing (already downloaded) source
     laravel new my_app --local=/usr/src/laravel
 
-    # using a remote repository
+    # use a remote repository
     laravel new my_app --remote="http://github.com/user/my_laravel_fork"
+    
+    # use default settings and update Application Index
+    laravel new my_app --index='home.php'
+
+### In an existing Laravel application
+
+    # update Application Index for the application
+    laravel update_index ''  # removes application index for app in current directory
+    laravel update_index 'home.php' --app=./new_app # update for app in specified directory
     
 ### Help
 
@@ -58,7 +67,7 @@ cached!
 
 ## Coming Soon..
     # create and customize a new Laravel application
-    laravel new my_app --index=''           # set application index to blank
+    <del>laravel new my_app --index=''           # set application index to blank</del>
     laravel new my_app --[no-]key           # generate a new key
     laravel new my_app --database=db_my_app # create a database, defaults to app name
     laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
@@ -71,3 +80,10 @@ cached!
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Testing
+
+Note that, the tests for this gem can be really slow, since we download
+repositories from github for properly testing the gem. Moreover, running the
+test suite will download the official Laravel repository in the local cache,
+thereby, speeding up creation of new applications.

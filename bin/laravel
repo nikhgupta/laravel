@@ -8,27 +8,29 @@ bin_file = Pathname.new(__FILE__).realpath
 # add self to libpath
 $:.unshift File.expand_path(File.join(%w[ .. .. lib]), bin_file)
 
-require "laravel"
-require "thor"
+require "laravel" # which indirectly requires 'thor'
 
 module Laravel
   class CLI < Thor
 
     # display version/information about this gem
+    # default   => display usage information for the gem
+    # --version => display current Laravel version
     desc "info", "displays usage information about this gem."
     method_options %w( version -v) => :boolean
     def info
-      if options[:version]
-        puts "Laravel v#{Laravel::VERSION}"
-      else
-        puts Laravel::INFO
-      end
+      puts options[:version] ? "Laravel v#{Laravel::VERSION}" : Laravel::INFO
       # puts "Made possible by efforts of Laravel Community"
     end
 
     # create a new laravel application
+    # default  => create a bare bone Laravel application
+    # --local  => use a local directory for source
+    # --remote => use a remote git repository for source
+    # --index  => update Application Index for newly created application
+    # --force  => overwrite target directory, if it exists
     desc "new [MY_APP]", "install a new Laravel application"
-    method_option :local,  :type => :string, :aliases => "-l", :banner => "DIRECTORY",
+    method_option :local,  :type => :string,  :aliases => "-l", :banner => "DIRECTORY",
       :desc => "use laravel source from a local directory"
     method_option :remote, :type => :string,  :aliases => "-r", :banner => "GIT_REPO",
       :desc => "use this git repository instead (useful when working with forks, e.g.)"
@@ -36,7 +38,16 @@ module Laravel
     method_option :index,  :type => :string,  :aliases => "-i",
       :desc => "change the Application Index"
     def new(app_name)
-      Laravel::Download::source app_name, options
+      Laravel::Create::source app_name, options
+    end
+
+    # allow the user to modify Application Index
+    # --app => use the given directory instead of pwd
+    desc "update_index [NEW_INDEX]", "modify the Application Index for Laravel application"
+    method_option :app, :type => :string, :aliases => "-a",
+      :desc => "use the specified Laravel application instead of current directory"
+    def update_index(new_index)
+      Laravel::Manage::update_index new_index, options[:app]
     end
 
     # choose a default task to run
@@ -45,4 +56,4 @@ module Laravel
   end
 end
 
-Laravel::CLI.start
+Laravel::CLI.start # starts our CLI application

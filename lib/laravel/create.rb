@@ -1,5 +1,5 @@
 module Laravel
-  class Download
+  class Create
     # This method downloads the Laravel source files.
     #
     # When downloading from remote repositories, it checks to see if we have
@@ -13,7 +13,7 @@ module Laravel
     # * *Returns* :
     #   - string containing error message, if any or is otherwise nil
     #
-    def self.source(path, options)
+    def self.source(path, options = {})
 
       # make sure that the path does not already exists (no overwrites!)
       if File.exists?(path) and not options[:force]
@@ -66,7 +66,7 @@ module Laravel
     #
     def self.local_repository(options = {})
       # do not attempt download/update if user specifically wants to stay offline
-      return if options.has_key?(:local)
+      return if options.has_key?("local")
 
       # prefer remote path, if specifically supplied by user
       # otherwise, default to the official repository
@@ -84,6 +84,8 @@ module Laravel
       FileUtils.mkdir_p local_path_for_remote_repo
       # say_info "Created requisite directory structure."
       Dir.chdir local_path_for_remote_repo do
+        # do an update if cache exists, otherwise download it
+        # do this every time before creating new app so that we are always up-to-date
         if Laravel::local_repository_exists?(remote_repo)
           Laravel::say_info "Repository exists in local cache.."
           Laravel::say_info "Updating repository in local cache.."

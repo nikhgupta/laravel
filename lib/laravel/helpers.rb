@@ -12,8 +12,6 @@ module Laravel
     true
   end
 
-  # check if this is the first installation from this gem
-
   # check if local repository exists for a given remote git source
   def self.local_repository_exists?(source)
     local_repository_path = Laravel::crypted_path(source)
