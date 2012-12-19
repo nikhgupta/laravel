@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Laravel Gem by nikhgupta</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Laravel Gem</h1>
+        <p>Readily build new applications using Laravel framework for PHP</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/nikhgupta/laravel" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/nikhgupta/laravel/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/nikhgupta/laravel/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>Laravel</h1>
+
+<p>A wrapper around Laravel framework for PHP.<br>
+Currently, is only capable of downloading Laravel source from
+a local directory, some git based (online/offline) repository
+or from the official source on Github.  </p>
+
+<p><a href="https://codeclimate.com/github/nikhgupta/laravel"><img src="https://codeclimate.com/badge.png" alt="Code
+Climate"></a> | <a href="https://travis-ci.org/nikhgupta/laravel"><img src="https://travis-ci.org/nikhgupta/laravel.png?branch=master" alt="Build Status"></a></p>
+
+<p><strong>Still in development.</strong></p>
+
+<h2>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'laravel'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install laravel
+</code></pre>
+
+<h2>Usage</h2>
+
+<h3>Create a new Laravel application</h3>
+
+<p>Laravel gem has a caching mechanism in-built, which allows to keep a local
+copy when you use the remote repositories for the first time. After this,
+whenever you use the remote repository again, it will only update the local
+repository (as opposed to a fresh git clone, which is considerably slow for
+certain connections). This will, further, allow you to install Laravel
+applications even when you are not connected to the Internet.</p>
+
+<p>Since, you can specify which git repository to use to fetch the Laravel
+source, you can create new Laravel application based on your own or someone
+else's fork of Laravel, if required. And, yes! These repositories will be
+cached!</p>
+
+<pre><code># with default settings (fetches source from http://github.com/laravel/laravel.git)
+laravel new my_app
+
+# force a clean install on existing directory
+laravel new my_app --force
+
+# using an existing (already downloaded) source
+laravel new my_app --local=/usr/src/laravel
+
+# using a remote repository
+laravel new my_app --remote="http://github.com/user/my_laravel_fork"
+</code></pre>
+
+<h3>Help</h3>
+
+<pre><code>laravel help
+</code></pre>
+
+<h2>Coming Soon..</h2>
+
+<pre><code># create and customize a new Laravel application
+laravel new my_app --index=''           # set application index to blank
+laravel new my_app --[no-]key           # generate a new key
+laravel new my_app --database=db_my_app # create a database, defaults to app name
+laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
+laravel new my_app --bundles=sentry,bob # install the provided bundles
+</code></pre>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/nikhgupta">nikhgupta</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
