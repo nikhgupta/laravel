@@ -32,15 +32,11 @@ module Laravel
       :desc => "use laravel source from a local directory"
     method_option :remote, :type => :string,  :aliases => "-r", :banner => "GIT_REPO",
       :desc => "use this git repository instead (useful when working with forks, e.g.)"
-    method_option :force,  :type => :boolean, :aliases => "-f",
-      :desc => "force overwrite"
+    method_option :force,  :type => :boolean, :desc => "force overwrite"
+    method_option :index,  :type => :string,  :aliases => "-i",
+      :desc => "change the Application Index"
     def new(app_name)
-      result = Laravel::Download::source app_name, options
-      if result
-        say_status "ERROR!!", result, :red
-      else
-        say_status "Success", "Application Downloaded Successfully!"
-      end
+      Laravel::Download::source app_name, options
     end
 
     # choose a default task to run

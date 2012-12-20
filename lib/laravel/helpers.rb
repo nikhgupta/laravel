@@ -17,11 +17,7 @@ module Laravel
   # check if local repository exists for a given remote git source
   def self.local_repository_exists?(source)
     local_repository_path = Laravel::crypted_path(source)
-    if Laravel::has_laravel? local_repository_path
-      local_repository_path
-    else
-      nil
-    end
+    Laravel::has_laravel?(local_repository_path) ? local_repository_path : nil
   end
 
   # return the crypted folder name for a given remote repository
@@ -32,5 +28,34 @@ module Laravel
   # return the crypted folder path for a given remote repository
   def self.crypted_path(source)
     File.join(Laravel::LocalRepositories, Laravel::crypted_name(source))
+  end
+
+  # ask user for confirmation
+  def self.yes?(message, color=nil)
+    shell = Thor::Shell::Color.new
+    shell.yes?(message, color)
+  end
+
+  # say something to the user.
+  def self.say(status, message = "", log_status = true)
+    shell = Thor::Shell::Color.new
+    shell.say_status(status, message, log_status)
+  end
+
+  def self.say_info(message)
+    self.say "Information", message, :cyan
+  end
+
+  def self.say_success(message)
+    self.say "Success", message, :green
+  end
+
+  def self.say_failed(message)
+    self.say "Failed!!", message, :yellow
+  end
+
+  def self.say_error(message)
+    self.say "!!ERROR!!", message, :red
+    exit
   end
 end
