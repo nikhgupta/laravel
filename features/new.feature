@@ -38,4 +38,13 @@ Feature: Laravel 'new'
     When  I run `laravel new my_app --remote=http://github.com/github/gitignore`
     Then  local cache for "non_laravel" repository should not be created
     And   the stdout should contain "source is corrupt"
+    And   the stdout should contain "ERROR"
     And   laravel application must not be created inside "my_app" directory
+
+  @may_require_repository_download
+  Scenario: create Laravel application in the current directory
+    When  I run `laravel new . --force`
+    Then  the stdout should contain "Hurray!"
+    And   laravel application must be created inside current directory
+    When  I run `laravel new .`
+    Then  the stdout should contain "ERROR"

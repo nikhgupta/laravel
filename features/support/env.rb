@@ -1,6 +1,13 @@
 require "aruba/cucumber"
 require "laravel"
 
+After do
+  test_directory = File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. tmp aruba]))
+  FileUtils.rm_rf(File.join(test_directory, "my_app"))
+  FileUtils.rm_rf(File.join(test_directory, "laravel"))
+  FileUtils.rm_rf(File.join(test_directory, "current"))
+end
+
 Before('@very_slow') do
   @aruba_timeout_seconds = 300
 end
@@ -15,9 +22,4 @@ end
 
 Before('@slow') do
   @aruba_timeout_seconds = 60
-end
-
-After do
-  FileUtils.rm_rf(File.join(%w[ tmp aruba my_app]))
-  FileUtils.rm_rf(File.join(%w[ tmp aruba laravel]))
 end

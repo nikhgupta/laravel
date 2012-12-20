@@ -14,26 +14,34 @@ module Laravel
     #   - string containing error message, if any or is otherwise nil
     #
     def self.source(path, options = {})
+      # get some information about this path
+      path = File.expand_path(path)
+      is_current_dir = (path == File.expand_path('.'))
+      is_not_empty   = (Dir.entries(path).size > 2) if File.exists?(path)
 
       # make sure that the path does not already exists (no overwrites!)
-      if File.exists?(path) and not options[:force]
-        Laravel::say_error "directory already exists!"
+      if ((File.exists?(path) and not is_current_dir) or (is_current_dir and is_not_empty)) and not options[:force]
+        Laravel::say_error "directory already exists or is not empty!"
       end
 
       # delete the existing files, if we are forced for this
       if options[:force]
         Laravel::say_info "Creating application forcefully!"
-        FileUtils.rm_rf path
+        is_current_dir ? FileUtils.rm_rf("#{path}/.", :secure => true) : FileUtils.rm_rf(path)
       end
 
       # create the requisite directory structure
-      FileUtils.mkdir_p File.dirname(path)
+      FileUtils.mkdir_p File.dirname(path) unless is_current_dir
 
       # download/update local repository as required
       local_repo_for_remote_path = options[:local] || self.local_repository(options)
 
       # copy the Laravel source to the required path
-      FileUtils.cp_r local_repo_for_remote_path, path
+      if is_current_dir
+        FileUtils.cp_r "#{local_repo_for_remote_path}/.", path
+      else
+        FileUtils.cp_r local_repo_for_remote_path, path
+      end
 
       # make necessary changes for the new app, if we were successful in download
       # otherwise, remove the downloaded source
@@ -44,7 +52,7 @@ module Laravel
       else
         Laravel::say_failed "Downloaded source is not Laravel framework or a possible fork."
         Laravel::say_info "Cleaning up.."
-        FileUtils.rm_rf "#{path}"
+        FileUtils.rm_rf "#{path}" unless is_current_dir
         # delete_corrupted = Laravel::yes? "Should I delete the specified repository from local cache? (default: yes)"
         # if delete_corrupted
           # Laravel::say_info "Deleting local cache for this source!"

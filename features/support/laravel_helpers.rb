@@ -1,6 +1,5 @@
 module LaravelHelpers
-  # this is what `aruba` changes directory to, when testing
-  TestDirectory = File.expand_path(File.join(%w[ tmp aruba]))
+  TestDirectory = File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. tmp aruba]))
 
   def get_relative_path_to_test_directory(dir, relative_to = nil)
     relative_to = TestDirectory unless relative_to

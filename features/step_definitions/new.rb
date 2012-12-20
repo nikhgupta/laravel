@@ -9,6 +9,11 @@ Then /^laravel application must not be created inside "(.*?)" directory$/ do |di
   !File.exists?(dir)
 end
 
+Then /^laravel application must be created inside current directory$/ do
+  dir = File.expand_path(Dir.pwd)
+  Laravel::has_laravel?(dir)
+end
+
 Then /^local cache for "(.*?)" repository should not be created$/ do |repo|
   repo = get_test_repo_path(repo)
   !File.exists?(repo)
