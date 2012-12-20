@@ -46,10 +46,12 @@ Currently, is only capable of downloading Laravel source from
 a local directory, some git based (online/offline) repository
 or from the official source on Github.  </p>
 
-<p><a href="https://codeclimate.com/github/nikhgupta/laravel"><img src="https://codeclimate.com/badge.png" alt="Code
-Climate"></a> | <a href="https://travis-ci.org/nikhgupta/laravel"><img src="https://travis-ci.org/nikhgupta/laravel.png?branch=master" alt="Build Status"></a></p>
-
 <p><strong>Still in development.</strong></p>
+
+<p><a href="https://codeclimate.com/github/nikhgupta/laravel"><img src="https://codeclimate.com/badge.png" alt="Code
+Climate"></a>
+| <a href="https://gemnasium.com/nikhgupta/laravel"><img src="https://gemnasium.com/nikhgupta/laravel.png" alt="Dependency
+Status"></a> | <a href="https://travis-ci.org/nikhgupta/laravel"><img src="https://travis-ci.org/nikhgupta/laravel.png?branch=master" alt="Build Status"></a></p>
 
 <h2>Installation</h2>
 
@@ -84,17 +86,27 @@ source, you can create new Laravel application based on your own or someone
 else's fork of Laravel, if required. And, yes! These repositories will be
 cached!</p>
 
-<pre><code># with default settings (fetches source from http://github.com/laravel/laravel.git)
+<pre><code># use default settings (fetches source from http://github.com/laravel/laravel.git)
 laravel new my_app
 
 # force a clean install on existing directory
 laravel new my_app --force
 
-# using an existing (already downloaded) source
+# use an existing (already downloaded) source
 laravel new my_app --local=/usr/src/laravel
 
-# using a remote repository
+# use a remote repository
 laravel new my_app --remote="http://github.com/user/my_laravel_fork"
+
+# use default settings and update Application Index
+laravel new my_app --index='home.php'
+</code></pre>
+
+<h3>In an existing Laravel application</h3>
+
+<pre><code># update Application Index for the application
+laravel update_index ''  # removes application index for app in current directory
+laravel update_index 'home.php' --app=./new_app # update for app in specified directory
 </code></pre>
 
 <h3>Help</h3>
@@ -105,7 +117,7 @@ laravel new my_app --remote="http://github.com/user/my_laravel_fork"
 <h2>Coming Soon..</h2>
 
 <pre><code># create and customize a new Laravel application
-laravel new my_app --index=''           # set application index to blank
+&lt;del&gt;laravel new my_app --index=''           # set application index to blank&lt;/del&gt;
 laravel new my_app --[no-]key           # generate a new key
 laravel new my_app --database=db_my_app # create a database, defaults to app name
 laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
@@ -120,7 +132,12 @@ laravel new my_app --bundles=sentry,bob # install the provided bundles
 <li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
 <li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
 <li>Create new Pull Request</li>
-</ol>
+</ol><h2>Testing</h2>
+
+<p>Note that, the tests for this gem can be really slow, since we download
+repositories from github for properly testing the gem. Moreover, running the
+test suite will download the official Laravel repository in the local cache,
+thereby, speeding up creation of new applications.</p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/nikhgupta">nikhgupta</a></p>
