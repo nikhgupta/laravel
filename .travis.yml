@@ -8,9 +8,8 @@ rvm:
   - ruby-head
 matrix:
   allow_failures:
-    rvm:
-      - ruby-head
-      - jruby-19mode
+    - rvm: ruby-head
+    - rvm: jruby-19mode
 branches:
   only:
     - master
