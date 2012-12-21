@@ -16,7 +16,7 @@ end
 
 Then /^local cache for "(.*?)" repository should exist$/ do |repo|
   repo_path = get_test_repo_path(repo)
-  Laravel::has_laravel?(repo_path)
+  raise RSpec::Expectations::ExpectationNotMetError unless Laravel::has_laravel?(repo_path)
 end
 
 # download related
@@ -25,6 +25,11 @@ Given /^laravel source has already been downloaded in "(.*?)" directory$/ do |di
   dir = get_relative_path_to_test_directory(dir)
   # creating new default app is virtually same as downloading the source code
   Laravel::Create::source(dir, :force => true, :quiet => true) unless Laravel::has_laravel?(dir)
+end
+
+Given /^laravel application exists in "(.*?)" directory$/ do |dir|
+  dir = get_relative_path_to_test_directory(dir)
+  Laravel::Create::source(dir) unless Laravel::has_laravel?(dir)
 end
 
 # suppress any output from Thor based shell while testing

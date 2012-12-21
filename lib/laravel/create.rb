@@ -48,6 +48,7 @@ module Laravel
       if Laravel::has_laravel? path
         Laravel::say_success "Cloned Laravel repository."
         Laravel::Manage::update_index options[:index], path if options.has_key?("index")
+        Laravel::Manage::generate_key path if options.has_key?("key")
         Laravel::say_success "Hurray! Your Laravel application has been created!"
       else
         Laravel::say_failed "Downloaded source is not Laravel framework or a possible fork."
