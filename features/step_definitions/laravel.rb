@@ -64,7 +64,7 @@ end
 # check if valid permissions were set on the "storage/" directory
 Then /^permissions should( not)? be updated on "(.*?)" directory$/ do |negation, dir|
   dir = get_relative_path_to_test_directory(dir)
-  world_bit = sprintf("%o", File.stat(dir).mode).to_s[-1].to_i
+  world_bit = sprintf("%o", File.stat(dir).mode).to_s[-1,1].to_i
   is_world_writable = [2,3,6,7].include?(world_bit)
   raise_error_based_on_condition(is_world_writable, negation)
 end
