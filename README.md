@@ -1,9 +1,9 @@
 # Laravel
 
-A wrapper around Laravel framework for PHP.  
+A wrapper around Laravel framework for PHP.
 Currently, is only capable of downloading Laravel source from
 a local directory, some git based (online/offline) repository
-or from the official source on Github.  
+or from the official source on Github.
 Still in development.
 
 [![Code
@@ -42,32 +42,35 @@ cached!
 
     # use default settings (fetches source from http://github.com/laravel/laravel.git)
     laravel new my_app
-    
+
     # force a clean install on existing directory
     laravel new my_app --force
-    
+
     # use an existing (already downloaded) source
     laravel new my_app --local=/usr/src/laravel
 
     # use a remote repository
     laravel new my_app --remote="http://github.com/user/my_laravel_fork"
-    
+
     # use default settings and update Application Index
     laravel new my_app --index='home.php'
-    
+
     # use default settings and generate a new key
     laravel new my_app --key
+
+    # use default settings but do not update permissions on storage/ directory
+    laravel new my_app --no_perms
 
 ### In an existing Laravel application
 
     # update Application Index for the application
     laravel update_index ''  # removes application index for app in current directory
     laravel update_index 'home.php' --app=./new_app # update for app in specified directory
-    
+
     # generate a new key for the application
     laravel generate_key # generates key for app in current directory
     laravel generate_key --app=./new_app # generate key for app in specified directory
-    
+
 ### Help
 
     laravel help

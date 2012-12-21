@@ -29,7 +29,8 @@ module Laravel
     # --remote => use a remote git repository for source
     # --force  => overwrite target directory, if it exists
     # --index  => update Application Index for newly created application
-    # --[no-]key => generate a new key for this application
+    # --key    => generate a new key for this application
+    # --no_perms => do not update permissions on storage/ directory
     desc "new [MY_APP]", "create a new Laravel application"
     method_option :local,  :type => :string,  :aliases => "-l", :banner => "DIRECTORY",
       :desc => "use laravel source from a local directory"
@@ -40,6 +41,7 @@ module Laravel
       :desc => "change the Application Index"
     method_option :key,    :type => :boolean, :aliases => "-k",
       :desc => "generate a new key for this application"
+    method_option :no_perms, :type => :boolean, :desc => "do not update permissions on storage/ directory"
     def new(app_name)
       Laravel::Create::source app_name, options
     end

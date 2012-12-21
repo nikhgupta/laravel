@@ -4,7 +4,7 @@ module Laravel
     #
     # When downloading from remote repositories, it checks to see if we have
     # previously used that repository (can be the official Laravel source or
-    # forked one). If so, it updates the local copy of that repository and 
+    # forked one). If so, it updates the local copy of that repository and
     # installs from it. Otherwise, it creates a local copy of the repository
     # so that future installs from that repository are instant.
     #
@@ -46,7 +46,16 @@ module Laravel
       # make necessary changes for the new app, if we were successful in download
       # otherwise, remove the downloaded source
       if Laravel::has_laravel? path
+        storage_directory = File.join(path, "storage")
         Laravel::say_success "Cloned Laravel repository."
+        unless options.has_key?("no_perms")
+          response = system("chmod -R o+w #{storage_directory}")
+          if response
+            Laravel::say_success "Updated permissions on storage/ directory."
+          else
+            Laravel::say_failed "Could not update permissiosn on storage/ directory."
+          end
+        end
         Laravel::Manage::update_index options[:index], path if options.has_key?("index")
         Laravel::Manage::generate_key path if options.has_key?("key")
         Laravel::say_success "Hurray! Your Laravel application has been created!"

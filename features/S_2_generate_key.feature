@@ -14,7 +14,5 @@ Feature: Generate a new key for Laravel application
   @may_require_repository_download
   Scenario: create Laravel application and generate a key for it
     When  I run `laravel new my_app --key`
-    Then  local cache for "official" repository should exist
-    And   the stdout should contain "Hurray!"
-    And   laravel application must be created inside "my_app" directory
+    Then  laravel application should be ready to use in "my_app" directory
     And   application key must be set for "my_app" application
