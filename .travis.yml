@@ -4,12 +4,10 @@ rvm:
   - 1.9.2
   - 1.9.3
   - ree
-  - jruby-19mode
   - ruby-head
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-19mode
 branches:
   only:
     - master
