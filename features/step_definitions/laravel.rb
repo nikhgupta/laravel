@@ -38,7 +38,7 @@ Then /^laravel application should be ready to use in "(.*?)" directory$/ do |dir
   step "local cache for \"official\" repository should exist"
   step "the stdout should contain \"Hurray!\""
   step "laravel application must exist in \"#{dir}\" directory"
-  step "permissions should be updated on \"storage\" directory"
+  step "permissions should be updated on \"#{dir}/storage\" directory"
 end
 
 # check if we have a running Laravel instance using 'non-official' repository
@@ -46,7 +46,7 @@ Then /^laravel application should be ready to use in "(.*?)" directory using "(.
   step "local cache for \"#{repo}\" repository should exist"
   step "the stdout should contain \"Hurray!\""
   step "laravel application must exist in \"#{dir}\" directory"
-  step "permissions should be updated on \"storage\" directory"
+  step "permissions should be updated on \"#{dir}/storage\" directory"
 end
 
 # check if local cache exists
@@ -63,8 +63,9 @@ end
 
 # check if valid permissions were set on the "storage/" directory
 Then /^permissions should( not)? be updated on "(.*?)" directory$/ do |negation, dir|
-  dir = File.join(get_relative_path_to_test_directory(dir), "storage")
-  is_world_writable = File.world_writable?(dir)
+  dir = get_relative_path_to_test_directory(dir)
+  world_bit = sprintf("%o", File.stat(dir).mode).to_s[-1].to_i
+  is_world_writable = [2,3,6,7].include?(world_bit)
   raise_error_based_on_condition(is_world_writable, negation)
 end
 

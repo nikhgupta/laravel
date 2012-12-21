@@ -47,7 +47,7 @@ Feature: Create a new application based on Laravel framework for PHP
     When  I run `laravel new my_app --no_perms`
     Then  the stdout should contain "Hurray!"
     And   laravel application must exist in "my_app" directory
-    And   permissions should not be updated on "storage" directory
+    And   permissions should not be updated on "my_app/storage" directory
 
   @may_require_repository_download
   Scenario: create Laravel application with maximum customizations
