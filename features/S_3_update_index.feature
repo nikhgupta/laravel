@@ -1,7 +1,7 @@
-Feature: Laravel 'update_index'
-  In order to update Application Index in a Laravel application
+Feature: Update Application Index for a Laravel based application
+  In order to have pretty links in my web application
   As a PHP developer acquinted with ruby
-  I want to use Laravel gem
+  I want to use Laravel gem to update Application Index for this application
 
   @may_require_repository_download
   Scenario: update Application Index in a Laravel application

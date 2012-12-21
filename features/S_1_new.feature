@@ -1,7 +1,7 @@
-Feature: Laravel 'new'
-  In order to create a new application based on Laravel framework
+Feature: Create a new application based on Laravel framework for PHP
+  In order to develop awesome web application
   As a PHP developer acquinted with ruby
-  I want to use Laravel gem
+  I want to use Laravel gem to setup Laravel framework
 
   @requires_repository_download @very_slow
   Scenario: create Laravel application with default settings

@@ -1,12 +1,5 @@
-Given /^laravel application exists in "(.*?)" directory$/ do |dir|
-  dir = get_relative_path_to_test_directory(dir)
-  Laravel::Create::source(dir) unless Laravel::has_laravel?(dir)
-end
-
-Then /^application index must be set to "(.*?)" for "(.*?)" application$/ do |new_index, dir|
-  dir = get_relative_path_to_test_directory(dir)
-  config_file = File.join(dir, %w[ application config application.php ])
-  File.readlines(config_file).grep(/'index' => '#{new_index}'/).any?
+Then /^application index must be set to "(.*?)" for "(.*?)" application$/ do |new_index, app_directory|
+  check_config_file_for_string("'index' => '#{new_index}'", app_directory)
 end
 
 # suppress any output from Thor based shell while testing

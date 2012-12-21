@@ -54,12 +54,19 @@ cached!
     
     # use default settings and update Application Index
     laravel new my_app --index='home.php'
+    
+    # use default settings and generate a new key
+    laravel new my_app --key
 
 ### In an existing Laravel application
 
     # update Application Index for the application
     laravel update_index ''  # removes application index for app in current directory
     laravel update_index 'home.php' --app=./new_app # update for app in specified directory
+    
+    # generate a new key for the application
+    laravel generate_key # generates key for app in current directory
+    laravel generate_key --app=./new_app # generate key for app in specified directory
     
 ### Help
 
@@ -68,7 +75,7 @@ cached!
 ## Coming Soon..
     # create and customize a new Laravel application
     <del>laravel new my_app --index=''           # set application index to blank</del>
-    laravel new my_app --[no-]key           # generate a new key
+    <del>laravel new my_app --key                # generate a new key<del>
     laravel new my_app --database=db_my_app # create a database, defaults to app name
     laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
     laravel new my_app --bundles=sentry,bob # install the provided bundles
