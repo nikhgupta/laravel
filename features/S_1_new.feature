@@ -3,7 +3,7 @@ Feature: Create a new application based on Laravel framework for PHP
   As a PHP developer acquinted with ruby
   I want to use Laravel gem to setup Laravel framework
 
-  @requires_repository_download @very_slow
+  @requires_repository_download @very_slow @online
   Scenario: create Laravel application with default settings
     Given local cache does not exist for "official" repository
     When  I run `laravel new my_app`
@@ -16,13 +16,13 @@ Feature: Create a new application based on Laravel framework for PHP
     When  I run `laravel new .`
     Then  the stdout should contain "ERROR"
 
-  @requires_repository_download
+  @requires_repository_download @online
   Scenario: create Laravel application using source from a non-official repo
     Given local cache does not exist for "pastes" repository
     When  I run `laravel new my_app --remote=http://github.com/laravel/pastes`
     Then  laravel application should be ready to use in "my_app" directory using "pastes" repository
 
-  @requires_repository_download
+  @requires_repository_download @online
   Scenario: create Laravel application using non-laravel repository
     When  I run `laravel new my_app --remote=http://github.com/github/gitignore`
     Then  local cache for "non_laravel" repository should not exist
@@ -51,9 +51,9 @@ Feature: Create a new application based on Laravel framework for PHP
 
   @may_require_repository_download
   Scenario: create Laravel application with maximum customizations
-    When I run `laravel new -ki '' -r http://github.com/laravel/pastes my_app --force`
+    When I run `laravel new -kgi 'home.php' -r http://github.com/laravel/pastes my_app --force`
     Then laravel application should be ready to use in "my_app" directory
     And  the stdout should contain "Creating application forcefully"
-    And  the stdout should contain "Generated a new key"
-    And  the stdout should contain "Changed Application Index"
-    And  the generator tasks should be setup for "my_app" application
+    And  application key must be set for "my_app" application
+    And  application index must be set to "home.php" for "my_app" application
+    And  generator tasks should be setup for "my_app" application

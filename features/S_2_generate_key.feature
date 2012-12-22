@@ -8,8 +8,7 @@ Feature: Generate a new key for Laravel application
     Given laravel application exists in "my_app" directory
     Then  application key must not be set for "my_app" application
     When  I run `laravel generate_key --app=my_app`
-    Then  the stdout should contain "Generated a new key"
-    And   application key must be set for "my_app" application
+    Then  application key must be set for "my_app" application
 
   @may_require_repository_download
   Scenario: create Laravel application and generate a key for it

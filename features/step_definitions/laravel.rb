@@ -63,6 +63,7 @@ end
 
 # check if valid permissions were set on the "storage/" directory
 Then /^permissions should( not)? be updated on "(.*?)" directory$/ do |negation, dir|
+  step "the stdout should contain \"Updated permissions\"" unless negation
   dir = get_relative_path_to_test_directory(dir)
   world_bit = sprintf("%o", File.stat(dir).mode).to_s[-1,1].to_i
   is_world_writable = [2,3,6,7].include?(world_bit)
@@ -71,11 +72,13 @@ end
 
 # check if application index was set
 Then /^application index must be set to "(.*?)" for "(.*?)" application$/ do |new_index, app_directory|
+  step "the stdout should contain \"Changed Application Index\""
   check_config_file_for_string("'index' => '#{new_index}'", app_directory)
 end
 
 # check if application key was set
 Then /^application key must(| not) be set for "(.*?)" application$/ do |negation, app_directory|
+  step "the stdout should contain \"Generated a new key\"" unless negation
   key_regex = negation.empty? ? "[0-9a-f]{32}" : "YourSecretKeyGoesHere!"
   check_config_file_for_string("'key' => '#{key_regex}'", app_directory)
 end
@@ -86,8 +89,10 @@ Then /^generator tasks should be setup for "(.*?)" application$/ do |dir|
   dir = get_relative_path_to_test_directory(dir)
   generator_tasks_file = File.join(dir, %w[ application tasks generate.php])
   raise_error_based_on_condition(File.exists?(generator_tasks_file))
-  artisan = File.join(dir, "artisan")
-  step "I run `php #{artisan} generate`"
-  step "the stdout should contain \"generate\""
-  step "the stdout should not contain \"Sorry\""
+  unless `which php`.empty?
+    artisan = File.join(dir, "artisan")
+    step "I run `php #{artisan} generate`"
+    step "the stdout should contain \"generate\""
+    step "the stdout should not contain \"Sorry\""
+  end
 end

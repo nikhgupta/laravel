@@ -47,7 +47,13 @@ module Laravel
       # download the Laravel Generator
       generator_url  = "https://raw.github.com/JeffreyWay/Laravel-Generator/master/generate.php"
       generator_file = File.join(tasks_directory, "generate.php")
-      success = system("curl -s #{generator_url} > #{generator_file}")
+      success = case
+      when `which curl` then system("curl -s #{generator_url} > #{generator_file}")
+      when `which wget` then system("wget -s #{generator_url} -O #{generator_file}")
+      else false
+      end
+
+      # display appropriate output to the user
       if success
         Laravel::say_success "Downloaded Laravel Generator by Jeffrey Way"
       else
