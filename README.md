@@ -59,7 +59,7 @@ cached!
     laravel new my_app --key
 
     # use default settings but do not update permissions on storage/ directory
-    laravel new my_app --no_perms
+    laravel new my_app --no-perms
 
 ### In an existing Laravel application
 

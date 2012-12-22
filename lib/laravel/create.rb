@@ -46,9 +46,9 @@ module Laravel
       # make necessary changes for the new app, if we were successful in download
       # otherwise, remove the downloaded source
       if Laravel::has_laravel? path
-        storage_directory = File.join(path, "storage")
         Laravel::say_success "Cloned Laravel repository."
-        unless options.has_key?("no_perms")
+        if options[:perms]
+          storage_directory = File.join(path, "storage")
           response = system("chmod -R o+w #{storage_directory}")
           if response
             Laravel::say_success "Updated permissions on storage/ directory."

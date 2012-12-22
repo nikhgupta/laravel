@@ -16,7 +16,7 @@ module Laravel
       # use default settings and update Application Index
     laravel new my_app --key
       # use default settings and generate a new key
-    laravel new my_app --no_perms
+    laravel new my_app --no-perms
       # use default settings but do not update permissions on storage/ directory
 
   Update Application Index on existing Laravel applications

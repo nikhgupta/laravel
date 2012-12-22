@@ -44,7 +44,7 @@ Feature: Create a new application based on Laravel framework for PHP
 
   @may_require_repository_download
   Scenario: create Laravel application but do not update permissions on storage/ directory
-    When  I run `laravel new my_app --no_perms`
+    When  I run `laravel new my_app --no-perms`
     Then  the stdout should contain "Hurray!"
     And   laravel application must exist in "my_app" directory
     And   permissions should not be updated on "my_app/storage" directory
