@@ -79,3 +79,14 @@ Then /^application key must(| not) be set for "(.*?)" application$/ do |negation
   key_regex = negation.empty? ? "[0-9a-f]{32}" : "YourSecretKeyGoesHere!"
   check_config_file_for_string("'key' => '#{key_regex}'", app_directory)
 end
+
+# check if generator tasks were setup
+Then /^generator tasks should be setup for "(.*?)" application$/ do |dir|
+  step "the stdout should contain \"Downloaded Laravel Generator by Jeffrey Way\""
+  dir = get_relative_path_to_test_directory(dir)
+  generator_tasks_file = File.join(dir, %w[ application tasks generate.php])
+  raise_error_based_on_condition(File.exists?(generator_tasks_file))
+  step "I run `php #{dir}artisan generate`"
+  step "the stdout should contain \"generate\""
+  step "the stdout should not contain \"Sorry\""
+end
