@@ -18,6 +18,8 @@ module Laravel
       # use default settings and generate a new key
     laravel new my_app --no-perms
       # use default settings but do not update permissions on storage/ directory
+    laravel new my_app --generator
+      # use default settings and downloaded Laravel generator by Jeffrey Way
 
   Update Application Index on existing Laravel applications
   =========================================================
@@ -31,6 +33,13 @@ module Laravel
     laravel generate_key
       # in the current directory
     laravel generate_key --app=./laravel
+      # for application in the specified directory
+
+  Download Laraevl Generator by Jeffrey Way
+  =========================================
+    laravel get_generator
+      # in the current directory
+    laravel get_generator --app=./laravel
       # for application in the specified directory
   '''
 end

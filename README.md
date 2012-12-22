@@ -61,6 +61,18 @@ cached!
     # use default settings but do not update permissions on storage/ directory
     laravel new my_app --no-perms
 
+    # use default settings and download Laravel Generator by Jeffrey Way
+    laravel new my_app --generator
+
+    # the settings I use:
+    laravel new my_app --key --generator --index=''
+    ## this creates a Laravel application from the official repository,
+    ## sets the Application Index to blank, makes the storage directory
+    ## world-writable, generates a new key for the application and finally
+    ## sets up the :generate tasks by downloading Laravel Generator.
+    ## Furthermore, this creates the local cache for the official repository
+    ## which makes the future installs quite faster :)
+
 ### In an existing Laravel application
 
     # update Application Index for the application
