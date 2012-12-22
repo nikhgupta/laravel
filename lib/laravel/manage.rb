@@ -32,6 +32,29 @@ module Laravel
       end
     end
 
+    # download the Laravel Generator by Jeffrey Way
+    #
+    # * *Args*    :
+    #   - +app_directory+ -> the directory of the Laravel app, defaults to current working directory
+    #
+    def self.get_generator(app_directory = nil)
+      # default to current working directory if path is not specified
+      app_directory ||= Dir.pwd
+
+      # get the path to the tasks folder
+      tasks_directory = File.expand_path(File.join(app_directory, %w[ application tasks ]))
+
+      # download the Laravel Generator
+      generator_url  = "https://raw.github.com/JeffreyWay/Laravel-Generator/master/generate.php"
+      generator_file = File.join(tasks_directory, "generate.php")
+      success = system("curl -s #{generator_url} > #{generator_file}")
+      if success
+        Laravel::say_success "Downloaded Laravel Generator by Jeffrey Way"
+      else
+        Laravel::say_failed "Could not download Laravel Generator"
+      end
+    end
+
     private
 
     def self.change_configuration(match, replace, app_directory = nil)

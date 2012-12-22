@@ -58,6 +58,7 @@ module Laravel
         end
         Laravel::Manage::update_index options[:index], path if options.has_key?("index")
         Laravel::Manage::generate_key path if options.has_key?("key")
+        Laravel::Manage::get_generator path if options.has_key?("generator")
         Laravel::say_success "Hurray! Your Laravel application has been created!"
       else
         Laravel::say_failed "Downloaded source is not Laravel framework or a possible fork."

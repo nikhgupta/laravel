@@ -56,3 +56,4 @@ Feature: Create a new application based on Laravel framework for PHP
     And  the stdout should contain "Creating application forcefully"
     And  the stdout should contain "Generated a new key"
     And  the stdout should contain "Changed Application Index"
+    And  the generator tasks should be setup for "my_app" application

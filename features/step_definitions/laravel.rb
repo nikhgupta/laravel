@@ -86,7 +86,8 @@ Then /^generator tasks should be setup for "(.*?)" application$/ do |dir|
   dir = get_relative_path_to_test_directory(dir)
   generator_tasks_file = File.join(dir, %w[ application tasks generate.php])
   raise_error_based_on_condition(File.exists?(generator_tasks_file))
-  step "I run `php #{dir}artisan generate`"
+  artisan = File.join(dir, "artisan")
+  step "I run `php #{artisan} generate`"
   step "the stdout should contain \"generate\""
   step "the stdout should not contain \"Sorry\""
 end
