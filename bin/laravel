@@ -41,6 +41,8 @@ module Laravel
       :desc => "change the Application Index"
     method_option :key,    :type => :boolean, :aliases => "-k",
       :desc => "generate a new key for this application"
+    method_option :generator, :type => :boolean, :aliases => "-g",
+      :desc => "get the Laravel generator by Jeffrey Way"
     method_option :no_perms, :type => :boolean, :desc => "do not update permissions on storage/ directory"
     def new(app_name)
       Laravel::Create::source app_name, options
@@ -55,11 +57,22 @@ module Laravel
       Laravel::Manage::update_index new_index, options[:app]
     end
 
+    # allow the user to generate a new key
+    # --app => use the given directory instead of pwd
     desc "generate_key", "generate a new key for Laravel application"
     method_option :app, :type => :string, :aliases => "-a",
       :desc => "use the specified Laravel application instead of current directory"
     def generate_key
       Laravel::Manage::generate_key options[:app]
+    end
+
+    # allow the user to download the generator from Jeffrey Way
+    # --app => use the given directory instead of pwd
+    desc "get_generator", "download the Laravel Generator by Jeffrey Way"
+    method_option :app, :type => :string, :aliases => "-a",
+      :desc => "use the specified Laravel application instead of current directory"
+    def get_generator
+      Laravel::Manage::get_generator options[:app]
     end
 
     # choose a default task to run
