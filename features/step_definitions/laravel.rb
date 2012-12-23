@@ -5,35 +5,50 @@ module Laravel
 end
 
 #### GIVEN ####
-# local cache exists
+
+# This test setups a given condition where the local cache may or may not exist
+# for a given source repository. It does so by removing the cache directory, and
+# then recreating it, if not negated, by downloading the repository from github.
+#
 Given /^local cache( does not)? exists? for "(.*?)" repository$/ do |negation, repo|
-  repo_url  = get_test_repo_url(repo)
-  repo_path = get_test_repo_path(repo, repo_url)
+  @app_tester = Laravel::AppTests.new(nil, repo)
+
   if negation
-    FileUtils.rm_rf repo_path
-  else
+    FileUtils.rm_rf @app_tester.app.cache
+  elsif not @app_tester.app.has_cache?
     # easiest method to ensure local cache exists is to clone repo from github
-    unless Laravel::has_laravel?(repo_path)
-      FileUtils.rm_rf repo_path
-      `git clone #{repo_url} #{repo_path} &>/dev/null`
-    end
+    FileUtils.rm_rf @app_tester.app.cache
+    `git clone #{@app_tester.app.source} #{@app_tester.app.cache} &>/dev/null`
   end
 end
 
-# laravel exists in directory
+# This test setups a given condition where the Laravel application exists in a
+# given directory. It does so by removing the directory if it exists and then,
+# creating a new Laravel application there.
+#
 Given /^laravel application exists in "(.*?)" directory$/ do |dir|
-  dir = get_relative_path_to_test_directory(dir)
-  Laravel::Create::source(dir, :force => true, :quiet => true) unless Laravel::has_laravel?(dir)
+  FileUtils.rm_rf(dir) if File.directory?(dir)
+  @app_tester = Laravel::AppTests.new(dir)
+  @app_tester.app.merge_options(:force => true, :quiet => true)
+  @app_tester.app.create unless @app_tester.app.has_laravel?
 end
 
-# laravel has been downloaded in directory
+# This test setups a given condition where the Laravel framework source has
+# been download in a given directory, which is essentially the same as testing
+# whether a Laravel application existing in a given directory.
+#
 Given /^laravel source has already been downloaded in "(.*?)" directory$/ do |dir|
   # creating laravel in directory is virtually same as it being downloaded there
   step "laravel application exists in \"#{dir}\" directory"
 end
 
 #### THEN ####
-# check if we have a running Laravel instance using 'Official' repository
+
+# This test checks whether the Laravel application we created is ready to use in
+# a given directory, which is to say whether we can readily use Laravel after
+# the command 'new' has been issued. This test assumes that the source repository
+# is the official Laravel repository.
+#
 Then /^laravel application should be ready to use in "(.*?)" directory$/ do |dir|
   step "local cache for \"official\" repository should exist"
   step "the stdout should contain \"Hurray!\""
@@ -41,7 +56,10 @@ Then /^laravel application should be ready to use in "(.*?)" directory$/ do |dir
   step "permissions should be updated on \"#{dir}/storage\" directory"
 end
 
-# check if we have a running Laravel instance using 'non-official' repository
+# This test checks whether the Laravel application we created is ready to use
+# in a given directory using a given source repository, which is to say whether
+# we can readily use Laravel after the command 'new' has been issued.
+#
 Then /^laravel application should be ready to use in "(.*?)" directory using "(.*?)" repository$/ do |dir, repo|
   step "local cache for \"#{repo}\" repository should exist"
   step "the stdout should contain \"Hurray!\""
@@ -49,50 +67,50 @@ Then /^laravel application should be ready to use in "(.*?)" directory using "(.
   step "permissions should be updated on \"#{dir}/storage\" directory"
 end
 
-# check if local cache exists
+# This test checks whether the local cache exists for a given repository. It
+# does so by calling the 'has_cache?' method on the application.
+#
 Then /^local cache for "(.*?)" repository should( not)? exist$/ do |repo, negation|
-  repo_path = get_test_repo_path(repo)
-  raise_error_based_on_condition(Laravel::has_laravel?(repo_path), negation)
+  @app_tester = Laravel::AppTests.new(nil, repo)
+  @app_tester.raise_error?(@app_tester.app.has_cache?, negation)
 end
 
-# check if laravel application exists in the given directory
+# This test checks if a Laravel application exists (or was created) in the given
+# directory. It does so by calling the 'has_laravel?' method on the application.
+#
 Then /^laravel application must( not)? exist in "(.*?)" directory$/ do |negation, dir|
-  dir = get_relative_path_to_test_directory(dir)
-  raise_error_based_on_condition(Laravel::has_laravel?(dir), negation)
+  @app_tester = Laravel::AppTests.new(dir)
+  @app_tester.raise_error?(@app_tester.app.has_laravel?, negation)
 end
 
-# check if valid permissions were set on the "storage/" directory
+# This test checks if valid permissions were set on the "storage/" directory
+# This test checks if the valid permissions were set on the "storage/" directory
+# of the application.
+#
 Then /^permissions should( not)? be updated on "(.*?)" directory$/ do |negation, dir|
+  @app_tester = Laravel::AppTests.new(dir)
   step "the stdout should contain \"Updated permissions\"" unless negation
-  dir = get_relative_path_to_test_directory(dir)
-  world_bit = sprintf("%o", File.stat(dir).mode).to_s[-1,1].to_i
+  world_bit = sprintf("%o", File.stat(@app_tester.app_dir).mode).to_s[-1,1].to_i
   is_world_writable = [2,3,6,7].include?(world_bit)
-  raise_error_based_on_condition(is_world_writable, negation)
+  @app_tester.raise_error?(is_world_writable, negation)
 end
 
-# check if application index was set
-Then /^application index must be set to "(.*?)" for "(.*?)" application$/ do |new_index, app_directory|
-  step "the stdout should contain \"Changed Application Index\""
-  check_config_file_for_string("'index' => '#{new_index}'", app_directory)
+# This test checks if the given configuration setting has been updated to a given
+# value for the specified application.
+#
+Then /^configuration: "(.*?)" must be updated to "(.*?)" for "(.*?)" application$/ do |config, value, app_dir|
+  value = '.*' if value == "__something__"
+  @app_tester = Laravel::AppTests.new(app_dir)
+  @app_tester.validate_configuration("'#{config}' => '#{value}'")
+  step "the stdout should contain \"Updated configuration: #{config}\""
 end
 
-# check if application key was set
-Then /^application key must(| not) be set for "(.*?)" application$/ do |negation, app_directory|
-  step "the stdout should contain \"Generated a new key\"" unless negation
-  key_regex = negation.empty? ? "[0-9a-f]{32}" : "YourSecretKeyGoesHere!"
-  check_config_file_for_string("'key' => '#{key_regex}'", app_directory)
-end
-
-# check if generator tasks were setup
-Then /^generator tasks should be setup for "(.*?)" application$/ do |dir|
-  step "the stdout should contain \"Downloaded Laravel Generator by Jeffrey Way\""
-  dir = get_relative_path_to_test_directory(dir)
-  generator_tasks_file = File.join(dir, %w[ application tasks generate.php])
-  raise_error_based_on_condition(File.exists?(generator_tasks_file))
-  unless `which php`.empty?
-    artisan = File.join(dir, "artisan")
-    step "I run `php #{artisan} generate`"
-    step "the stdout should contain \"generate\""
-    step "the stdout should not contain \"Sorry\""
-  end
+# This test checks if the given resource has been installed in the specified
+# application.
+#
+Then /^(.*?): "(.*?)" should be installed (?:as|in) "(.*?)" for "(.*?)" application$/ do |type, name, filename, app_dir|
+  @app_tester = Laravel::AppTests.new(app_dir)
+  filepath = @app_tester.app.tasks_file(filename) if type == "task"
+  @app_tester.raise_error?(File.exists?(filepath))
+  step "the stdout should contain \"Installed #{type}: #{name.capitalize}\""
 end

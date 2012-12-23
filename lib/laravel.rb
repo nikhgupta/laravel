@@ -3,7 +3,7 @@ require "thor"
 
 # require laravel files
 require "laravel/version"
-require "laravel/info"
-require "laravel/helpers"
-require "laravel/manage"
-require "laravel/create"
+require "laravel/app_support"
+require "laravel/app"
+require "laravel/configuration"
+require "laravel/installer"

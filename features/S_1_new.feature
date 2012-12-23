@@ -3,28 +3,28 @@ Feature: Create a new application based on Laravel framework for PHP
   As a PHP developer acquinted with ruby
   I want to use Laravel gem to setup Laravel framework
 
-  @requires_repository_download @very_slow @online
+  @requires_repository_download @very_slow @online 
   Scenario: create Laravel application with default settings
     Given local cache does not exist for "official" repository
     When  I run `laravel new my_app`
     Then  laravel application should be ready to use in "my_app" directory
 
-  @may_require_repository_download
+  @may_require_repository_download 
   Scenario: create Laravel application in the current directory
     When  I run `laravel new . --force`
     Then  laravel application should be ready to use in "." directory
     When  I run `laravel new .`
     Then  the stdout should contain "ERROR"
 
-  @requires_repository_download @online
+  @requires_repository_download @online 
   Scenario: create Laravel application using source from a non-official repo
     Given local cache does not exist for "pastes" repository
-    When  I run `laravel new my_app --remote=http://github.com/laravel/pastes`
+    When  I run `laravel new my_app --source=http://github.com/laravel/pastes`
     Then  laravel application should be ready to use in "my_app" directory using "pastes" repository
 
   @requires_repository_download @online
   Scenario: create Laravel application using non-laravel repository
-    When  I run `laravel new my_app --remote=http://github.com/github/gitignore`
+    When  I run `laravel new my_app --source=http://github.com/github/gitignore`
     Then  local cache for "non_laravel" repository should not exist
     And   the stdout should contain "source is corrupt"
     And   the stdout should contain "ERROR"
@@ -33,13 +33,13 @@ Feature: Create a new application based on Laravel framework for PHP
   @may_require_repository_download
   Scenario: create Laravel application using repository from local cache
     Given local cache exists for "pastes" repository
-    When  I run `laravel new my_app --remote=http://github.com/laravel/pastes`
+    When  I run `laravel new my_app --source=http://github.com/laravel/pastes`
     Then  laravel application should be ready to use in "my_app" directory using "pastes" repository
 
-  @may_require_repository_download
+  @may_require_repository_download 
   Scenario: create Laravel application using source from a directory
     Given laravel source has already been downloaded in "laravel" directory
-    When  I run `laravel new my_app --local=laravel`
+    When  I run `laravel new my_app --source=laravel`
     Then  laravel application should be ready to use in "my_app" directory
 
   @may_require_repository_download
@@ -51,9 +51,9 @@ Feature: Create a new application based on Laravel framework for PHP
 
   @may_require_repository_download
   Scenario: create Laravel application with maximum customizations
-    When I run `laravel new -kgi 'home.php' -r http://github.com/laravel/pastes my_app --force`
-    Then laravel application should be ready to use in "my_app" directory
+    When I run `laravel new -kgi 'home.php' -s http://github.com/laravel/pastes my_app --force`
+    Then laravel application should be ready to use in "my_app" directory using "pastes" repository
     And  the stdout should contain "Creating application forcefully"
-    And  application key must be set for "my_app" application
-    And  application index must be set to "home.php" for "my_app" application
-    And  generator tasks should be setup for "my_app" application
+    And  configuration: "key" must be updated to "__something__" for "my_app" application
+    And  configuration: "index" must be updated to "home.php" for "my_app" application
+    And  task: "generator" should be installed as "generate.php" for "my_app" application

@@ -5,79 +5,54 @@
 require "pathname"
 bin_file = Pathname.new(__FILE__).realpath
 
-# add self to libpath
+# add 'lib' and 'bin' folders to the load path.
 $:.unshift File.expand_path(File.join(%w[ .. .. lib]), bin_file)
+$:.unshift File.expand_path(File.join(%w[ .. .. bin]), bin_file)
 
 require "laravel" # which indirectly requires 'thor'
 
+# require our commands
+require "commands/new"
+require "commands/config"
+require "commands/install"
+
 module Laravel
+  # A means to create and manage applications based on the Laravel
+  # framework for PHP. This has a neat command-subcommand structure
+  # which imitates Git. This is run when we invoke Laravel over CLI.
   class CLI < Thor
 
-    # display version/information about this gem
-    # default   => display usage information for the gem
-    # --version => display current Laravel version
-    desc "info", "displays usage information about this gem."
-    method_options %w( version -v) => :boolean
-    def info
-      puts options[:version] ? "Laravel v#{Laravel::VERSION}" : Laravel::INFO
+    # choose a default task to run
+    default_task :version
+
+    # map some inputs to tasks
+    map "-T" => "help", "-C" => "config", "-I" => "install", "-N" => "new"
+
+    # config subcommand that manipulates app configuration
+    #
+    # +command+ :: subcommand to run.
+    #
+    desc "config [COMMAND]", "configure an existing application"
+    subcommand "config", Laravel::Commands::Config
+
+    # install subcommand that gets us some bundles and goodies
+    #
+    # +command+ :: subcommand to run.
+    #
+    desc "install [COMMAND]", "install bundles and other goodies"
+    subcommand "install", Laravel::Commands::Install
+
+    # display version information for this gem but is a hidden task,
+    # which means that it will not be shown in the 'help' overview.
+    #
+    # +version+ :: display current Laravel version, aliased as '-v'
+    #
+    desc "version", "displays usage information about this gem.", :hide => true
+    method_option :version, :type => :boolean, :aliases => "-v"
+    def version
+      puts "Laravel v#{Laravel::VERSION}"
       # puts "Made possible by efforts of Laravel Community"
     end
-
-    # create a new laravel application
-    # default  => create a bare bone Laravel application
-    # --local  => use a local directory for source
-    # --remote => use a remote git repository for source
-    # --force  => overwrite target directory, if it exists
-    # --index  => update Application Index for newly created application
-    # --key    => generate a new key for this application
-    # --[no-]perms => do not update permissions on storage/ directory
-    desc "new [MY_APP]", "create a new Laravel application"
-    method_option :local,  :type => :string,  :aliases => "-l", :banner => "DIRECTORY",
-      :desc => "use laravel source from a local directory"
-    method_option :remote, :type => :string,  :aliases => "-r", :banner => "GIT_REPO",
-      :desc => "use this git repository instead (useful when working with forks, e.g.)"
-    method_option :force,  :type => :boolean, :desc => "force overwrite"
-    method_option :index,  :type => :string,  :aliases => "-i",
-      :desc => "change the Application Index"
-    method_option :key,    :type => :boolean, :aliases => "-k",
-      :desc => "generate a new key for this application"
-    method_option :perms, :type => :boolean, :default => true,
-      :desc => "default | update permissions on storage/ directory"
-    method_option :generator, :type => :boolean, :aliases => "-g",
-      :desc => "get the Laravel generator by Jeffrey Way"
-    def new(app_name)
-      Laravel::Create::source app_name, options
-    end
-
-    # allow the user to modify Application Index
-    # --app => use the given directory instead of pwd
-    desc "update_index [NEW_INDEX]", "modify the Application Index for Laravel application"
-    method_option :app, :type => :string, :aliases => "-a",
-      :desc => "use the specified Laravel application instead of current directory"
-    def update_index(new_index)
-      Laravel::Manage::update_index new_index, options[:app]
-    end
-
-    # allow the user to generate a new key
-    # --app => use the given directory instead of pwd
-    desc "generate_key", "generate a new key for Laravel application"
-    method_option :app, :type => :string, :aliases => "-a",
-      :desc => "use the specified Laravel application instead of current directory"
-    def generate_key
-      Laravel::Manage::generate_key options[:app]
-    end
-
-    # allow the user to download the generator from Jeffrey Way
-    # --app => use the given directory instead of pwd
-    desc "get_generator", "download the Laravel Generator by Jeffrey Way"
-    method_option :app, :type => :string, :aliases => "-a",
-      :desc => "use the specified Laravel application instead of current directory"
-    def get_generator
-      Laravel::Manage::get_generator options[:app]
-    end
-
-    # choose a default task to run
-    default_task :info
 
   end
 end
