@@ -1,4 +1,4 @@
-# Laravel
+[[#]] Laravel
 
 A wrapper around Laravel framework for PHP.
 Currently, is only capable of downloading Laravel source from
@@ -76,12 +76,15 @@ cached!
 ### In an existing Laravel application
 
     # update Application Index for the application
-    laravel update_index ''  # removes application index for app in current directory
-    laravel update_index 'home.php' --app=./new_app # update for app in specified directory
+    laravel config index ''  # removes application index for app in current directory
+    laravel config index 'home.php' --app=./new_app # update for app in specified directory
 
     # generate a new key for the application
-    laravel generate_key # generates key for app in current directory
-    laravel generate_key --app=./new_app # generate key for app in specified directory
+    laravel config key # generates key for app in current directory
+    laravel config key --app=./new_app # generate key for app in specified directory
+    
+    # download the Laravel generator by Jeffrey Way
+    laravel install generator --app=./new_app
 
 ### Help
 
@@ -90,9 +93,9 @@ cached!
 ## Coming Soon..
     # create and customize a new Laravel application
     <del>laravel new my_app --index=''           # set application index to blank</del>
-    <del>laravel new my_app --key                # generate a new key<del>
+    <del>laravel new my_app --key                # generate a new key</del>
+    <del>laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way</del>
     laravel new my_app --database=db_my_app # create a database, defaults to app name
-    laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
     laravel new my_app --bundles=sentry,bob # install the provided bundles
 
 ## Contributing
