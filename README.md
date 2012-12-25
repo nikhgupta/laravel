@@ -1,4 +1,4 @@
-[[#]] Laravel
+# Laravel
 
 A wrapper around Laravel framework for PHP.
 Currently, is only capable of downloading Laravel source from
