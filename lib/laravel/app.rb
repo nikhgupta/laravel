@@ -11,12 +11,6 @@ module Laravel
     # these attributes must be available as: object.attribute
     attr_reader   :cache_folder, :laravel_repo, :app_path, :source, :cache, :options
 
-    # the path to the folder where the sources will be locally cached.
-    CacheFolder = File.expand_path(File.join(ENV['HOME'], %w[ .laravel repos ]))
-
-    # the official Laravel repository URL which is also the default source for us.
-    LaravelRepo = "http://github.com/laravel/laravel.git"
-
     # This method initializes a new App object for us, on which we can apply
     # our changes.  Logically, this new App object represents an application
     # based on Laravel.

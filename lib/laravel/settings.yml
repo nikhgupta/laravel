@@ -1,0 +1,43 @@
+config:
+  url:
+    factory: ""
+    default: __factory__
+    type: url
+  asset_url:
+    factory: ""
+    default: __factory__
+    type: url
+  index:
+    factory: index.php
+    default: ""
+    type: string
+  key:
+    factory: "YourSecretKeyGoesHere!"
+    default: __random__
+    type: string
+  profiler:
+    factory: false
+    default: __factory__
+    type: boolean
+  encoding:
+    factory: UTF-8
+    default: __factory__
+    type: string
+  language:
+    factory: en
+    default: __factory__
+    type: string
+  langauges:
+    supported: false
+    type: array
+  ssl:
+    factory: false
+    default: __factory__
+    type: boolean
+  timezone:
+    factory: UTC
+    default: __factory__
+    type: string
+  aliases:
+    supported: false
+    type: array

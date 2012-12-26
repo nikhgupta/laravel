@@ -1,6 +1,15 @@
 module Laravel
   module Helpers
 
+    # the path to the folder where the sources will be locally cached.
+    CacheFolder = File.join(ENV['HOME'], %w[ .laravel repos ])
+
+    # the official Laravel repository URL which is also the default source for us.
+    LaravelRepo = "http://github.com/laravel/laravel.git"
+
+    # the path to the setting.yml file for this gem
+    GemSettings = File.join(File.dirname(__FILE__), "settings.yml")
+
     # convert a string to MD5 hash - useful to generate quick random strings.
     #
     # ==== Parameters
@@ -83,6 +92,26 @@ module Laravel
       return false unless File.exists? File.join(directory, "artisan")
       return false unless File.directory? File.join(directory, "laravel")
       true
+    end
+
+    # read the yaml configuration from a file
+    #
+    def read_yaml(file)
+      raise FileNotFoundError, file unless File.exists?(file)
+      data = YAML.load(File.open(file))
+      # adjust the 'config' hash by making substitutions
+      data["config"].each do |setting, matrix|
+        data["config"].delete(setting) if matrix.has_key?("supported") and not matrix["supported"]
+        data["config"][setting]["default"] = matrix["factory"] if matrix["default"] == "__factory__"
+      end
+      data
+    end
+
+    # write the configuration to a yaml file
+    #
+    def write_yaml(data, file)
+      raise FileNotFoundError, file unless File.exists?(file)
+      File.open(file, "w") {|f| f.write(data.to_yaml) }
     end
 
     # This method, simply, imitates the 'say' method that the Thor gem provides us.

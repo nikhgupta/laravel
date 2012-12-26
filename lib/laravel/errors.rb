@@ -44,6 +44,13 @@ module Laravel
     end
   end
 
+  class FileNotFoundError < StandardError
+    def initialize(message = nil)
+      message = message ? "File not found: #{message}" : "Could not find the specified file!"
+      super(message)
+    end
+  end
+
   # Show an error the user in Red, and exit the script, since this is an error!
   def self.handle_error(error, debug = false)
     shell = Thor::Shell::Color.new

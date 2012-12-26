@@ -190,5 +190,14 @@ module Laravel
       FileUtils.rm_rf "#{@app_path}" unless create_in_current_directory?
       FileUtils.rm_rf "#{@cache}"
     end
+
+
+    def read_gem_settings
+      read_yaml GemSettings
+    end
+
+    def write_gem_settings(data)
+      write_yaml data, GemSettings
+    end
   end
 end
