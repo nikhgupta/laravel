@@ -75,7 +75,7 @@ module Laravel
         say_failed "Downloaded source is not Laravel framework or a possible fork."
         show_info "Cleaning up.."
         clean_up
-        show_error "Specified Laravel source is corrupt!"
+        raise InvalidSourceRepositoryError
       end
     end
 

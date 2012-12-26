@@ -40,7 +40,7 @@ module Laravel
       response = case action
                  when "read" then __read_config(setting)
                  when "update" then __update_config(setting, new_value)
-                 else show_error "Do not know how to configure this setting!"
+                 else raise InvalidArgumentError
                  end
 
       # let the user know when we set the value to an empty string
@@ -101,18 +101,15 @@ module Laravel
 
       # try to change configuration only if this is a Laravel application
       # otherwise, raise an error
-      if has_laravel?
+      raise LaravelNotFoundError unless has_laravel?
 
-        # make the required substitution in the configuration file
-        text = File.read conf
-        text = text.gsub(/'#{key}' => '.*'/, "'#{key}' => '#{new_value}'")
-        File.open(conf, "w") {|file| file.puts text}
+      # make the required substitution in the configuration file
+      text = File.read conf
+      text = text.gsub(/'#{key}' => '.*'/, "'#{key}' => '#{new_value}'")
+      File.open(conf, "w") {|file| file.puts text}
 
-        # check to ensure we were able to update configuration
-        File.readlines(conf).grep(/'#{key}' => '#{new_value}'/).any?
-      else
-        show_error "Is this a valid Laravel application?"
-      end
+      # check to ensure we were able to update configuration
+      File.readlines(conf).grep(/'#{key}' => '#{new_value}'/).any?
     end
 
   end

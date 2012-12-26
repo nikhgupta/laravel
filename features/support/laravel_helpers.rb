@@ -71,7 +71,7 @@ module Laravel
     #                this condition raises an error if it evaluates to false.
     # +negate+ :: negate the default behaviour
     def raise_error?(condition, negate = nil)
-      raise RSpec::Expectations::ExpectationNotMetError if condition == !negate.nil?
+      raise ExpectationNotMetError if condition == !negate.nil?
     end
   end
 end

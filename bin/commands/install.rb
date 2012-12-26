@@ -4,6 +4,7 @@ module Laravel
     # This class is responsible for the various installation tasks
     # e.g. installing the bundles or other goodies.
     class Install < Thor
+      class_option :debug, :type => :boolean
 
       # This option specifies the application directory to use.
       # By default, this is the path to the current directory.
@@ -25,7 +26,11 @@ module Laravel
       desc "generator", "download the Laravel Generator by Jeffrey Way"
       def generator
         @installer = Laravel::Installer.new(options[:app])
-        @installer.task_generator
+        begin
+          @installer.task_generator
+        rescue StandardError => e
+          Laravel::handle_error e, options[:debug]
+        end
       end
     end
   end

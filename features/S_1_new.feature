@@ -26,7 +26,7 @@ Feature: Create a new application based on Laravel framework for PHP
   Scenario: create Laravel application using non-laravel repository
     When  I run `laravel new my_app --source=http://github.com/github/gitignore`
     Then  local cache for "non_laravel" repository should not exist
-    And   the stdout should contain "source is corrupt"
+    And   the stdout should contain "corrupt"
     And   the stdout should contain "ERROR"
     And   laravel application must not exist in "my_app" directory
 

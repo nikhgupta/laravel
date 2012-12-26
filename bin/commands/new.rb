@@ -1,5 +1,7 @@
 module Laravel
   class CLI < Thor
+    class_option :debug, :type => :boolean
+
     # This task creates a new application based on Laravel framework.  By
     # default, it simply copies a Laravel source to the path specified as the
     # argument. However, this method is heavily customizable and allows us to
@@ -38,7 +40,14 @@ module Laravel
     method_option :generator, :type => :boolean, :aliases => "-g",
       :desc => "get the Laravel generator by Jeffrey Way"
     def new(app_name)
-      Laravel::App.new(app_name, options).create
+      app = Laravel::App.new(app_name, options)
+      begin
+        app.create
+      rescue StandardError => e
+        Laravel::handle_error e, options[:debug]
+      rescue Exception => e
+        Laravel::handle_error e, options[:debug]
+      end
     end
 
   end

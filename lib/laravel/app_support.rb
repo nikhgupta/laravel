@@ -118,7 +118,7 @@ module Laravel
       # we need force if path is current directory but is not empty
       check_force ||= (create_in_current_directory? and not create_in_empty_directory?)
       # raise an error when we need to force and we have not been supplied with enforcements
-      show_error "required force is missing! please, provide enforcements!" if check_force and not @options[:force]
+      raise RequiredForceMissingError if check_force and not @options[:force]
     end
 
     # Depending on whether the 'force' parameter is provided, this method
@@ -143,7 +143,7 @@ module Laravel
     #
     def download_or_update_local_cache
       return if source_is_local?
-      show_error "git is required!" if `which git`.empty?
+      raise RequiredLibraryMissingError, "git" if `which git`.empty?
       FileUtils.mkdir_p @cache
       Dir.chdir(@cache) do
         if has_cache?
@@ -187,7 +187,7 @@ module Laravel
     # Keeping the local cache does not make sense, since we anyways can not create
     # applications based on these 'corrupt' repositories.
     def clean_up
-      FileUtils.rm_rf "#{@app_path}" unless current_directory?
+      FileUtils.rm_rf "#{@app_path}" unless create_in_current_directory?
       FileUtils.rm_rf "#{@cache}"
     end
   end
