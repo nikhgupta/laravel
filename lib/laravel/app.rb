@@ -5,6 +5,7 @@ module Laravel
   #
   class App
     # include the AppSupport module which has all the methods defined.
+    include Laravel::Helpers
     include Laravel::AppSupport
 
     # these attributes must be available as: object.attribute

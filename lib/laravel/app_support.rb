@@ -3,20 +3,7 @@ require 'digest/md5'
 module Laravel
   # various methods that help with various classes defined for the Laravel module
   module AppSupport
-
-    # convert a string to MD5 hash - useful to generate quick random strings.
-    #
-    # ==== Parameters
-    # +string+ :: optional, the input string to be hashed
-    #          :: a random string will be used for hashing, if this string is not provided
-    #
-    # ==== Return
-    # +string+ :: a 32-character long MD5'ed string
-    #
-    def make_md5(string = nil)
-      string ||= (0...32).map{ ('a'..'z').to_a[rand(26)] }.join
-      (Digest::MD5.new << string).to_s
-    end
+    include Laravel::Helpers
 
     # Return the path to the local cache directory for a given Source
     #
@@ -34,8 +21,8 @@ module Laravel
     # ==== Return
     # +boolean+ :: True, if the app directory is the current directory.
     #
-    def current_directory?
-      File.directory?(@app_path) and (@app_path == File.expand_path(Dir.pwd))
+    def create_in_current_directory?
+      is_current_directory?(@app_path)
     end
 
     # Check whether the app directory is empty?
@@ -46,8 +33,8 @@ module Laravel
     # ==== Return
     # +boolean+ :: True, if the app directory is an empty one.
     #
-    def empty_directory?
-      File.directory?(@app_path) and (Dir.entries(@app_path).size == 2)
+    def create_in_empty_directory?
+      is_empty_directory?(@app_path)
     end
 
     # Check whether the specified source is a local directory or a URL?
@@ -92,31 +79,6 @@ module Laravel
       File.expand_path(File.join(@app_path, %w[ application tasks ], name))
     end
 
-    # Download a given resource at a particular path
-    #
-    # ==== Parameters
-    # +path+   :: Path where the downloaded content will be saved.
-    #             This can either be the path to a single file or a directory.
-    #             If this is a directory, git will be used to download the source,
-    #             otherwise, curl will be used for the same. Therefore, please, make
-    #             sure that the source is a git repository when +path+ is a directory,
-    #             and that the source is an online file when +path+ is a file.
-    # +source+ :: Source URL/directory from where the content of the resource will be
-    #             downloaded. Please, read information about +path+
-    #
-    # ==== Return
-    # +boolean+ :: true, if the resource was downloaded successfully.
-    #
-    def download_resource(path, source, using)
-      using = "wget" if using == "curl" and `which curl`.empty? and not `which wget`.empty?
-      case using
-      when "git"  then system("git clone -q #{source} #{path}")
-      when "curl" then system("curl -s #{source} > #{path}")
-      when "wget" then system("wget #{source} -O #{path}")
-      else false
-      end
-    end
-
     # check if laravel framework exists in the current application's directory
     # currently, this is performed by looking for the presence of 'artisan' file
     # and the 'laravel' subdirectory.
@@ -139,26 +101,6 @@ module Laravel
       laravel_exists_in_directory?(@cache)
     end
 
-    # check if laravel framework exists in a specified directory
-    # this method is in turn called by the instance methods: 'has_cache?'
-    # and the 'has_laravel?'
-    #
-    # ==== Parameters
-    # +directory+ :: directory to check for the existance of laravel framework
-    #                this can be the relative path to the current app directory
-    #                or the absolute path of the directory.
-    #
-    # ==== Return
-    # +boolean+ :: true, if laravel exists in the given directory
-    #
-    def laravel_exists_in_directory?(directory = "")
-      return false unless directory
-      directory = File.expand_path(directory, @app_path)
-      return false unless File.exists? File.join(directory, "artisan")
-      return false unless File.directory? File.join(directory, "laravel")
-      true
-    end
-
     # This method first checks if the given application path requires
     # the 'force' option, and then checks if the 'force' option is provided
     # by the user.
@@ -172,9 +114,9 @@ module Laravel
     #
     def required_force_is_missing?
       # we need force if path exists and is not the current directory
-      check_force   = (File.exists?(@app_path) and not current_directory?)
+      check_force   = (File.exists?(@app_path) and not create_in_current_directory?)
       # we need force if path is current directory but is not empty
-      check_force ||= (current_directory? and not empty_directory?)
+      check_force ||= (create_in_current_directory? and not create_in_empty_directory?)
       # raise an error when we need to force and we have not been supplied with enforcements
       show_error "required force is missing! please, provide enforcements!" if check_force and not @options[:force]
     end
@@ -247,36 +189,6 @@ module Laravel
     def clean_up
       FileUtils.rm_rf "#{@app_path}" unless current_directory?
       FileUtils.rm_rf "#{@cache}"
-    end
-
-    # This method, simply, imitates the 'say' method that the Thor gem provides us.
-    # I preferred to use this method, since it gives us a very nice UI at the CLI :)
-    #
-    def say(status, message = "", log_status = true)
-      shell = Thor::Shell::Color.new
-      log_status = false if @options and @options[:quiet]
-      shell.say_status(status, message, log_status)
-    end
-
-    # Show some information to the user in Cyan.
-    def show_info(message)
-      say "Information", message, :cyan
-    end
-
-    # Show a success message to the user in Green.
-    def say_success(message)
-      say "Success", message, :green
-    end
-
-    # Show a failed message to the user in Yellow.
-    def say_failed(message)
-      self.say "Failed!!", message, :yellow
-    end
-
-    # Show an error the user in Red, and exit the script, since this is an error!
-    def show_error(message)
-      self.say "!!ERROR!!", message, :red
-      exit
     end
   end
 end
