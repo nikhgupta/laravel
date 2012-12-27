@@ -32,8 +32,7 @@ module Laravel
 
   class RequiredLibraryMissingError < StandardError
     def initialize(message = nil)
-      message = message ? "#{message} is required! Please, install it."
-                        : "One of the required library is missing, e.g. git, curl, etc.!"
+      message = message ? "#{message} is required! Please, install it." : "One of the required library is missing, e.g. git, curl, etc.!"
       super(message)
     end
   end
