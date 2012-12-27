@@ -1,7 +1,8 @@
 module Laravel
   # a means to test the gem
   class AppTests
-    attr_reader :app, :app_dir, :repo, :aruba
+    attr_reader :app, :app_path, :aruba
+    TestDirectory = File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. tmp aruba]))
 
     # create a new object that handles the tests for us
     #
@@ -10,20 +11,17 @@ module Laravel
     # +repo+ :: repository URL/directory for source
     #
     def initialize(dir = nil, repo = nil)
-      @repo    = repo
-      @aruba   = File.expand_path(File.join(File.dirname(__FILE__), %w[ .. .. tmp aruba]))
-
       # Store absolute path to the directory
-      @app_dir = dir || Dir.pwd
+      @app_path = dir || Dir.pwd
       convert_to_relative_path
 
       options = {
         :force  => false, :quiet  => false,
-        :perms  => true,  :source => get_source_url
+        :perms  => true,  :source => repo
       }
 
       # create a new Laravel App instance for given options
-      @app = Laravel::App.new(@app_dir, options)
+      @app = Laravel::App.new(@app_path, options)
     end
 
     # get the relative path of a directory relative to the temporary path aruba creates
@@ -33,22 +31,8 @@ module Laravel
     #                  By default, it is the path to the aruba tmp directory
     #
     def convert_to_relative_path(relative_to = nil)
-      relative_to = @aruba unless relative_to
-      @app_dir = File.expand_path(@app_dir, relative_to)
-    end
-
-    # get the url to a repository by a given alias/name
-    #
-    # ==== Return
-    # +string+ :: URL for the repository
-    #
-    def get_source_url
-      case @repo
-      when nil, "", "official", "default" then Laravel::App::LaravelRepo
-      when "pastes"  then "http://github.com/laravel/pastes"
-      when "non_laravel" then "http://github.com/github/gitignore"
-      else @repo
-      end
+      relative_to = TestDirectory unless relative_to
+      @app_path = File.expand_path(@app_path, relative_to)
     end
 
     # checks if the configuration file contains a particular string

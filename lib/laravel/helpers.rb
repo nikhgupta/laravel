@@ -5,7 +5,7 @@ module Laravel
     CacheFolder = File.join(ENV['HOME'], %w[ .laravel repos ])
 
     # the official Laravel repository URL which is also the default source for us.
-    LaravelRepo = "http://github.com/laravel/laravel.git"
+    LaravelRepo = "http://github.com/laravel/laravel"
 
     # the path to the setting.yml file for this gem
     GemSettings = File.join(File.dirname(__FILE__), "settings.yml")
