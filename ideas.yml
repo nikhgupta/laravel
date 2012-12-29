@@ -1,0 +1,10 @@
+Ideas:
+  - place a file in the ~/.laravel folder for every application being created
+    - helps in keeping a counter
+    - keeps a setting of the application that was created
+  - use yaml settings for the gem which is overridden by a local yaml settings file
+    - faster installs and deployments
+  - generalized configuration
+  - generalized installation
+    - tasks
+    - bundles
