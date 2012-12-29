@@ -16,6 +16,3 @@ test/tmp
 test/version_tmp
 tmp
 .rvmrc
-repositories/*
-!.gitkeep
-__tests

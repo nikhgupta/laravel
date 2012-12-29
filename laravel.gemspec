@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Laravel::VERSION
   gem.authors       = ["Nikhil Gupta"]
   gem.email         = ["me@nikhgupta.com"]
-  gem.description   = %q{A wrapper around Laravel framework for PHP}
-  gem.summary       = %q{This gem is a wrapper around the Laravel framework for PHP. Initially, the gem would allow to create new laravel apps along with options to modify the default behavior for these new installations.}
+  gem.description   = %q{Readily build new web applications using Laravel framework for PHP.}
+  gem.summary       = %q{This gem helps in readily creating new web application based on the Laravel framework for PHP with as much customization as possible. Moreover, it allows configuring existing Laravel applications, and installing Laravel bundles for them.}
   gem.homepage      = "https://github.com/nikhgupta/laravel"
 
   gem.files         = `git ls-files`.split($/)
@@ -17,12 +17,10 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
+  # add some dependecies for this gem
   gem.add_dependency 'thor'
 
+  # add some dependencies for this gem when in the development environment
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'aruba'
-  # gem.add_development_dependency 'rspec'
-  # gem.add_development_dependency 'guard-rspec'
-  # gem.add_development_dependency 'rb-fsevent'
-  # gem.add_development_dependency 'growl'
 end

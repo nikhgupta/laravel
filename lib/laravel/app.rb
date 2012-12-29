@@ -4,12 +4,12 @@ module Laravel
   # AppSupport module, which is being included as a mixin here.
   #
   class App
-    # include the AppSupport module which has all the methods defined.
+    # include the Helpers and AppSupport modules which has all the methods defined.
     include Laravel::Helpers
     include Laravel::AppSupport
 
     # these attributes must be available as: object.attribute
-    attr_reader   :cache_folder, :laravel_repo, :app_path, :source, :cache, :options
+    attr_reader   :app_path, :source, :cache, :options
 
     # This method initializes a new App object for us, on which we can apply
     # our changes.  Logically, this new App object represents an application
@@ -30,9 +30,12 @@ module Laravel
 
       @options = options
 
+      # source must default to Official Laravel Repository if none is provided
       @source = options[:source] if options
       @source = LaravelRepo if not @source or @source.empty?
 
+      # if the specified source is a remote repository, create a cache directory
+      # otherwise, use the source as the cache
       @cache = source_is_local? ? @source : cache_directory
     end
 
@@ -62,19 +65,31 @@ module Laravel
       # otherwise, remove the downloaded source
       if has_laravel?
         say_success "Cloned Laravel repository."
+
+        # update permissions on storage/ directory (this is the default)
+        update_permissions_on_storage if @options[:perms]
+
+        # configure this new application, as required
         configure_from_options
+
+        # download goodies for this new application, as specified
         install_from_options
+
         say_success "Hurray! Your Laravel application has been created!"
       else
         say_failed "Downloaded source is not Laravel framework or a possible fork."
         show_info "Cleaning up.."
+        # remove all directories that we created, as well as the cache.
         clean_up
-        raise InvalidSourceRepositoryError
+        # raise an error since we failed.. :(
+        raise LaravelError, "Source for downloading repository is corrupt!"
       end
     end
 
     # This method installs the required tasks/bundles by the user.
     # It does so by invoking the 'from_options' method of the Installer class.
+    #
+    # FIXME: This is bad code since the Super class knows about its Children
     def install_from_options
       install = Installer.new(@app_path, @options)
       install.from_options
@@ -82,9 +97,11 @@ module Laravel
 
     # This method configures the application as required by the user.
     # It does so by invoking the 'from_options' method of the Configuration class.
+    #
+    # FIXME: This is bad code since the Super class knows about its Children
     def configure_from_options
       config = Configuration.new(@app_path, @options)
-      config.update_from_options
+      config.from_options
     end
   end
 end

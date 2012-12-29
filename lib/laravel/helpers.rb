@@ -7,9 +7,6 @@ module Laravel
     # the official Laravel repository URL which is also the default source for us.
     LaravelRepo = "http://github.com/laravel/laravel"
 
-    # the path to the setting.yml file for this gem
-    GemSettings = File.join(File.dirname(__FILE__), "settings.yml")
-
     # convert a string to MD5 hash - useful to generate quick random strings.
     #
     # ==== Parameters
@@ -20,11 +17,16 @@ module Laravel
     # +string+ :: a 32-character long MD5'ed string
     #
     def make_md5(string = nil)
+      # create a random string if one is not provided
       string ||= (0...32).map{ ('a'..'z').to_a[rand(26)] }.join
+      # hash it
       (Digest::MD5.new << string).to_s
     end
 
     # Check whether the given directory is the current directory.
+    #
+    # ==== Parameters
+    # +dir+ :: the direcotry to check
     #
     # ==== Return
     # +boolean+ :: True, if the app directory is the current directory.
@@ -36,6 +38,9 @@ module Laravel
     end
 
     # Check whether the given directory is empty?
+    #
+    # ==== Parameters
+    # +dir+ :: the directory to check
     #
     # ==== Return
     # +boolean+ :: True, if the app directory is an empty one.
@@ -57,20 +62,28 @@ module Laravel
     #             and that the +source+ is an online file when +path+ is a file.
     # +source+ :: Source URL/directory from where the content of the resource will be
     #             downloaded. Please, read information about +path+
+    # +using+  :: can be either 'curl' or 'git' to download the resource
     #
     # ==== Return
     # +boolean+ :: true, if the resource was downloaded successfully.
     #
+    # ==== Raises
+    # +LaravelError+ :: if the required executable/binary is missing
+    #
     def download_resource(path, source, using)
-      raise RequiredLibraryMissingError, "curl" if using == "curl" and `which curl`.empty? and `which wget`.empty?
-      raise RequiredLibraryMissingError, "git" if using == "git"
+      using = "curl" if using == "shell"
 
-      using = "wget" if using == "curl" and `which curl`.empty? and not `which wget`.empty?
+      # default to `wget` if `curl` is not found
+      using = "wget" if `which curl`.empty?
+      # raise an error if required library is not found
+      message = "#{using} is required! Please, install it!"
+      raise LaravelError, message if `which #{using}`.empty?
+
+      # download the resource
       case using
       when "git"  then system("git clone -q #{source} #{path}")
       when "curl" then system("curl -s #{source} > #{path}")
       when "wget" then system("wget #{source} -O #{path}")
-      else raise RequiredLibraryMissingError
       end
     end
 
@@ -94,24 +107,16 @@ module Laravel
       true
     end
 
-    # read the yaml configuration from a file
+    # checks if a given variable is blank
     #
-    def read_yaml(file)
-      raise FileNotFoundError, file unless File.exists?(file)
-      data = YAML.load(File.open(file))
-      # adjust the 'config' hash by making substitutions
-      data["config"].each do |setting, matrix|
-        data["config"].delete(setting) if matrix.has_key?("supported") and not matrix["supported"]
-        data["config"][setting]["default"] = matrix["factory"] if matrix["default"] == "__factory__"
-      end
-      data
-    end
-
-    # write the configuration to a yaml file
+    # ==== Parameters
+    # +var+ :: the variable to check
     #
-    def write_yaml(data, file)
-      raise FileNotFoundError, file unless File.exists?(file)
-      File.open(file, "w") {|f| f.write(data.to_yaml) }
+    # ==== Return
+    # +boolean+ :: true, if +var+ is +nil+, or if it is an empty +string+
+    #
+    def is_blank?(var)
+      var.nil? or (var.is_a?(String) and var.strip.empty?)
     end
 
     # This method, simply, imitates the 'say' method that the Thor gem provides us.

@@ -1,7 +1,5 @@
 module Laravel
   class CLI < Thor
-    class_option :debug, :type => :boolean
-
     # This task creates a new application based on Laravel framework.  By
     # default, it simply copies a Laravel source to the path specified as the
     # argument. However, this method is heavily customizable and allows us to
@@ -23,8 +21,7 @@ module Laravel
     # +force+    :: [BOOLEAN] If we can not create an application at the specified path since it
     #               already exists or is not empty, passing this parameter will force us to create
     #               a new application, by first removing all the files inside the specified path.
-    # +index+    :: [STRING] If provided, updates the Application Index to this string.
-    # +key+      :: [BOOLEAN] If provided, generates a new key for our application.
+    # +config+   :: [STRING] A comma-separated list of `key-value` pairs - read docs for more information
     # +generator+:: [BOOLEAN] If provided, this downloads the Laravel Generator by Jeffrey Way.
     #
     desc "new [MY_APP]", "create a new Laravel application"
@@ -33,19 +30,16 @@ module Laravel
       :desc => "use this git repository - can be a directory or a URL"
     method_option :perms, :type => :boolean, :default => true,
       :desc => "default | update permissions on storage/ directory"
-    method_option :index,  :type => :string,  :aliases => "-i",
-      :desc => "change the Application Index"
-    method_option :key,    :type => :boolean, :aliases => "-k",
-      :desc => "generate a new key for this application"
+    method_option :config,  :type => :string,  :aliases => "-c",
+      :desc => "configure the application using semi-colon separated list (read docs)"
     method_option :generator, :type => :boolean, :aliases => "-g",
       :desc => "get the Laravel generator by Jeffrey Way"
+    method_option :debug, :type => :boolean
+
     def new(app_name)
-      app = Laravel::App.new(app_name, options)
       begin
-        app.create
+        Laravel::App.new(app_name, options).create
       rescue StandardError => e
-        Laravel::handle_error e, options[:debug]
-      rescue Exception => e
         Laravel::handle_error e, options[:debug]
       end
     end

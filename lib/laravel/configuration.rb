@@ -22,51 +22,39 @@ module Laravel
     # manipulated input from callee.
     #
     def method_missing(name, *args)
-      # capture the input from callee
-      value = args[0]
-
       # understand what the callee is requesting..
-      dissect = name.to_s.split "_"
+      dissect = name.to_s.split("_", 2)
       action  = dissect[0]
       setting = dissect[1]
 
+      if ["languages", "aliases"].include?(setting)
+        say_failed "Configuration settings: 'languages' and 'aliases' are not supported!"
+        return
+      end
+
       # lets manipulate the input value if a 'do_{method}' exists
-      new_value = method("do_#{name}").call(value) if Configuration.method_defined?("do_#{name}".to_sym)
+      new_value = method("do_#{name}").call(args[0]) if Configuration.method_defined?("do_#{name}".to_sym)
       # otherwise, use the passed value without any manipulations
-      new_value = value if new_value.nil? or new_value.strip.empty?
+      new_value = args[0] if is_blank?(new_value)
 
       # handle the {action} part of the method
       # performs a read/update on the Configuration setting.
       response = case action
                  when "read" then __read_config(setting)
                  when "update" then __update_config(setting, new_value)
-                 else raise InvalidArgumentError
                  end
 
       # let the user know when we set the value to an empty string
-      new_value = "__empty_string__" if new_value.nil? or new_value.strip.empty?
+      new_value = "__empty_string__" if is_blank?(new_value)
 
       # Let the user know that we have performed an action
-      if response and action != "read"
+      if response and (action != "read")
         say_success "#{action.capitalize}d configuration: #{setting} => #{new_value}"
+      elsif !response.nil? and (action == "read")
+        say_success "Configuration: #{setting} => #{response}"
       else
-        say_failed "Could not #{action} configuration: #{setting.capitalize}!"
+        say_failed "Could not #{action} configuration: #{setting}!"
       end
-    end
-
-    # update the configuration settings by looking at the options
-    # that the user has provided when running the 'new' task.
-    #
-    def update_from_options
-      # don't do anything, unless options were provided
-      return unless @options
-
-      # update permissions on storage/ directory (this is the default)
-      update_permissions_on_storage if @options[:perms]
-      # update Application Index, if provided
-      update_index @options[:index] unless @options[:index].nil?
-      # generate a new key, if asked for.
-      update_key if @options[:key]
     end
 
     # lets generate the random string required by the 'update_key' method
@@ -78,10 +66,38 @@ module Laravel
     # ==== Returns
     # String:: the new key for the application
     def do_update_key(value = nil)
+      return value unless is_blank?(value)
       make_md5
     end
 
+    def do_update_profiler(value)
+      __convert_action_to_boolean value
+    end
+
+    def do_update_ssl(value)
+      __convert_action_to_boolean value
+    end
+
+    # update the configuration settings by looking at the options
+    # that the user has provided when running the 'new' task.
+    #
+    def from_options
+      # don't do anything, unless options were provided
+      return unless @options and @options[:config]
+
+      config = @options[:config].split(",")
+      config.each do |c|
+        c = c.split(":", 2)
+        send("update_#{c[0]}", c[1])
+      end
+    end
+
     private
+
+    def __convert_action_to_boolean(value = nil)
+      on  = [true, "true", "active", "activated", "enable", "enabled", "yes", "on", "1", 1]
+      on.include?(value) ? true : false
+    end
 
     # handle the config update routine.
     # this method first checks to see if the current app is a Laravel
@@ -96,21 +112,40 @@ module Laravel
     # Boolean:: true if the update was successful.
     #
     def __update_config(key, new_value)
-      # default to current working directory if path is not specified
-      conf = config_file
-
       # try to change configuration only if this is a Laravel application
       # otherwise, raise an error
       raise LaravelNotFoundError unless has_laravel?
 
+      conf = config_file
+      replace = new_value.is_a?(String) ? "'#{new_value}'" : new_value
+      check   = new_value.is_a?(String) ? Regexp.escape(replace) : replace
+
       # make the required substitution in the configuration file
       text = File.read conf
-      text = text.gsub(/'#{key}' => '.*'/, "'#{key}' => '#{new_value}'")
-      File.open(conf, "w") {|file| file.puts text}
+      updated_text = text.gsub(/'#{key}' => .*,/, "'#{key}' => #{replace},")
+      File.open(conf, "w") {|file| file.puts updated_text}
 
       # check to ensure we were able to update configuration
-      File.readlines(conf).grep(/'#{key}' => '#{new_value}'/).any?
+      updated = File.readlines(conf).grep(/'#{key}' => #{check},/).any?
+
+      # revert if we could not update the configuration
+      File.open(conf, "w") {|file| file.puts text} unless updated
+
+      # response with a success or failure
+      updated
     end
 
+    def __read_config(key)
+      # try to change configuration only if this is a Laravel application
+      # otherwise, raise an error
+      raise LaravelNotFoundError unless has_laravel?
+
+      conf = config_file
+
+      # make the required substitution in the configuration file
+      text  = File.read conf
+      match = text.match(/'#{key}' => (.*),/)
+      match ? match[1] : nil
+    end
   end
 end

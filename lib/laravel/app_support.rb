@@ -3,6 +3,7 @@ require 'digest/md5'
 module Laravel
   # various methods that help with various classes defined for the Laravel module
   module AppSupport
+    # include various Laravel Helpers
     include Laravel::Helpers
 
     # Return the path to the local cache directory for a given Source
@@ -11,7 +12,7 @@ module Laravel
     # +string+ :: Filepath to the local cache directory
     #
     def cache_directory
-      File.join(Laravel::App::CacheFolder, make_md5(@source))
+      File.join(CacheFolder, make_md5(@source))
     end
 
     # Check whether the app directory is the current directory.
@@ -105,12 +106,12 @@ module Laravel
     # the 'force' option, and then checks if the 'force' option is provided
     # by the user.
     #
-    # Whether the path requires 'force' is determined as:
-    #   -- it is not the current directory
-    #   -- it is the current directory but is empty
+    # 'force' is required if the application path:
+    #   -- exists but is not the current directory
+    #   -- is the current directory but is not empty
     #
-    # ==== Return
-    # +error+ :: raises an error, if the 'force' parameter is required!!
+    # ==== Raises
+    # +LaravelError+ :: if the 'force' parameter is required!!
     #
     def required_force_is_missing?
       # we need force if path exists and is not the current directory
@@ -118,7 +119,8 @@ module Laravel
       # we need force if path is current directory but is not empty
       check_force ||= (create_in_current_directory? and not create_in_empty_directory?)
       # raise an error when we need to force and we have not been supplied with enforcements
-      raise RequiredForceMissingError if check_force and not @options[:force]
+      message = "Overwrite required. You must pass in 'force' flag to overwrite!"
+      raise LaravelError, message if check_force and not @options[:force]
     end
 
     # Depending on whether the 'force' parameter is provided, this method
@@ -142,17 +144,21 @@ module Laravel
     # caches it locally.
     #
     def download_or_update_local_cache
+      # we have nothing to download if the source is a local directory
       return if source_is_local?
+      # we need git for this purpose
       raise RequiredLibraryMissingError, "git" if `which git`.empty?
+
+      # create the cache, and download or update as required
       FileUtils.mkdir_p @cache
       Dir.chdir(@cache) do
         if has_cache?
           show_info "Repository exists in local cache.."
           show_info "Updating local cache.."
-          `git pull &>/dev/null`
+          `git pull -q`
         else
           show_info "Downloading repository to local cache.."
-          `git clone #{@source} . &>/dev/null`
+          `git clone -q #{@source} .`
         end
       end
     end
@@ -164,10 +170,10 @@ module Laravel
       FileUtils.cp_r "#{@cache}/.", @app_path
     end
 
-    # This method updates the permissions on the storage/ directory inside
-    # the newly created application. This method does not have a separate exposed
-    # call from the CLI. This can be skipped by passing '--no-perms' for the 'new'
-    # command.
+    # This method updates the permissions on the storage/ directory inside the
+    # newly created application. This method does not have a separate exposed
+    # call from the CLI. This can be skipped by passing '--no-perms' flag for
+    # the 'new' command.
     #
     def update_permissions_on_storage
       if @options[:perms]
@@ -186,18 +192,11 @@ module Laravel
     #
     # Keeping the local cache does not make sense, since we anyways can not create
     # applications based on these 'corrupt' repositories.
+    #
     def clean_up
       FileUtils.rm_rf "#{@app_path}" unless create_in_current_directory?
       FileUtils.rm_rf "#{@cache}"
     end
 
-
-    def read_gem_settings
-      read_yaml GemSettings
-    end
-
-    def write_gem_settings(data)
-      write_yaml data, GemSettings
-    end
   end
 end

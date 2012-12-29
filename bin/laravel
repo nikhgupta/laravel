@@ -26,7 +26,7 @@ module Laravel
     default_task :version
 
     # map some inputs to tasks
-    map "-T" => "help", "-C" => "config", "-I" => "install", "-N" => "new"
+    map "-T" => "help", "-C" => "config"
 
     # config subcommand that manipulates app configuration
     #

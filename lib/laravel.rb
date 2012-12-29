@@ -1,6 +1,5 @@
 # require dependencies
 require "thor"
-require "yaml"
 
 # require laravel files
 require "laravel/version"
