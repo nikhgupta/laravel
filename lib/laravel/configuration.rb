@@ -3,7 +3,33 @@ module Laravel
   # application.  This allows us to read and update settings in
   # ./application/config/application.php Furthermore, it allows us to read and
   # update various options, at one go.
-  class Configuration < App
+  class Configuration
+
+    include Laravel::Helpers
+    include Laravel::AppSupport
+
+    attr_reader :path, :config
+
+    def initialize(path = nil, config = nil)
+      self.path = path
+      self.config = config
+    end
+
+    def path=(path = nil)
+      path  = Dir.pwd if not path or path.strip.empty?
+      @path = File.expand_path(path)
+    end
+
+    def config=(config = {})
+      @config = config.is_a?(Hash) ? config : {}
+      config  = config.split(",") if config.is_a?(String)
+      if config.is_a?(Array)
+        config.each do |c|
+          c = c.split(":", 2)
+          @config[c[0]] = c[1]
+        end
+      end
+    end
 
     # This method creates dynamic read/update methods exposed by this class.
     # For this to work, the exposed functions have a definite naming
@@ -33,7 +59,9 @@ module Laravel
       end
 
       # lets manipulate the input value if a 'do_{method}' exists
-      new_value = method("do_#{name}").call(args[0]) if Configuration.method_defined?("do_#{name}".to_sym)
+      if Configuration.method_defined?("do_#{name}".to_sym)
+        new_value = method("do_#{name}").call(args[0])
+      end
       # otherwise, use the passed value without any manipulations
       new_value = args[0] if is_blank?(new_value)
 
@@ -83,19 +111,17 @@ module Laravel
     #
     def from_options
       # don't do anything, unless options were provided
-      return unless @options and @options[:config]
-
-      config = @options[:config].split(",")
-      config.each do |c|
-        c = c.split(":", 2)
-        send("update_#{c[0]}", c[1])
+      return if not @config or @config.empty?
+      @config.each do |key, value|
+        send("update_#{key}", value)
       end
     end
 
     private
 
     def __convert_action_to_boolean(value = nil)
-      on  = [true, "true", "active", "activated", "enable", "enabled", "yes", "on", "1", 1]
+      on  = [ true, "true", "active", "activated",
+              "enable", "enabled", "yes", "on", "1", 1 ]
       on.include?(value) ? true : false
     end
 

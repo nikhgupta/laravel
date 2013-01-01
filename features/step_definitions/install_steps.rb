@@ -1,5 +1,5 @@
 # When /install generator for this application$/ do
-  # step "I run `laravel install generator --app=#{@app_path}`"
+  # step "I run `laravel install generator --app=#{@path}`"
 # end
 
 # Then /^(?:|a )tasks? should be installed as "(.*?)"$/ do |filename|

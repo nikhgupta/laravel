@@ -81,7 +81,7 @@ module Laravel
 
       # download the resource
       case using
-      when "git"  then system("git clone -q #{source} #{path}")
+      when "git"  then system("git clone -q #{source} #{path} &>/dev/null")
       when "curl" then system("curl -s #{source} > #{path}")
       when "wget" then system("wget #{source} -O #{path}")
       end

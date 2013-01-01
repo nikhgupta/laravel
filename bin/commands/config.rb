@@ -40,9 +40,10 @@ module Laravel
         end
       end
 
-      # This task reads the current value of a configuration setting for an existing application.
-      # By default, it reads configuration for the application in the current
-      # directory, but this can be overridden by passing +app+ option.
+      # This task reads the current value of a configuration setting for an
+      # existing application.  By default, it reads configuration for the
+      # application in the current directory, but this can be overridden by
+      # passing +app+ option.
       #
       # ==== Parameters
       # +key+   :: [STRING] name of a configuration setting found in the

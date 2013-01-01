@@ -11,7 +11,7 @@ end
 
 # run a command in the application being tested
 When /^I run `(.*?)` inside this application$/ do |command|
-  step "I run `#{command} --app=#{@app.app_path}`"
+  step "I run `#{command} --app=#{@app.path}`"
 end
 
 # make sure that the configuration setting was updated correctly

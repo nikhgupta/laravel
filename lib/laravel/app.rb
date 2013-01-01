@@ -9,33 +9,43 @@ module Laravel
     include Laravel::AppSupport
 
     # these attributes must be available as: object.attribute
-    attr_reader   :app_path, :source, :cache, :options
+    attr_reader   :path, :source, :cache, :options
 
     # This method initializes a new App object for us, on which we can apply
     # our changes.  Logically, this new App object represents an application
     # based on Laravel.
     #
     # ==== Parameters
-    # +app_path+ :: The path to the Laravel based application. This can either
+    # +path+ :: The path to the Laravel based application. This can either
     # be a relative path to the current directory, or the absolute path. If
-    # +app_path+ is not supplied, we assume current directory.
+    # +path+ is not supplied, we assume current directory.
     #
     # +options+  :: A hash of options for this application. This hash can be
     # created manually, but more closely resembles the options choosen by the
     # user and forwarded by the Thor to us.
     #
-    def initialize(app_path = nil, options = nil)
-      app_path = Dir.pwd if not app_path or app_path.empty?
-      @app_path = File.expand_path(app_path)
+    def initialize(path = nil, options = nil)
+      self.path    = path
+      self.options = options
+      self.source  = source
+    end
 
-      @options = options
+    def path=(path="")
+      path = Dir.pwd if not path or path.empty?
+      @path = File.expand_path(path)
+    end
 
+    def options=(options={})
+      @options = @options ? @options.merge(options) : options
+    end
+
+    def source=(source)
       # source must default to Official Laravel Repository if none is provided
       @source = options[:source] if options
       @source = LaravelRepo if not @source or @source.empty?
 
-      # if the specified source is a remote repository, create a cache directory
-      # otherwise, use the source as the cache
+      # if the specified source is a remote repository, create a cache
+      # directory otherwise, use the source as the cache
       @cache = source_is_local? ? @source : cache_directory
     end
 
@@ -61,8 +71,8 @@ module Laravel
       # copy the framework files from the cache
       copy_over_cache_files
 
-      # make necessary changes for the new app, if we were successful in download
-      # otherwise, remove the downloaded source
+      # make necessary changes for the new app, if we were successful in
+      # download otherwise, remove the downloaded source
       if has_laravel?
         say_success "Cloned Laravel repository."
 
@@ -77,7 +87,7 @@ module Laravel
 
         say_success "Hurray! Your Laravel application has been created!"
       else
-        say_failed "Downloaded source is not Laravel framework or a possible fork."
+        say_failed "Downloaded source is not Laravel framework or its fork."
         show_info "Cleaning up.."
         # remove all directories that we created, as well as the cache.
         clean_up
@@ -91,8 +101,10 @@ module Laravel
     #
     # FIXME: This is bad code since the Super class knows about its Children
     def install_from_options
-      install = Installer.new(@app_path, @options)
-      install.from_options
+      if @options[:install]
+        installer = Installer.new(@path, @options[:install])
+        installer.from_options
+      end
     end
 
     # This method configures the application as required by the user.
@@ -100,8 +112,10 @@ module Laravel
     #
     # FIXME: This is bad code since the Super class knows about its Children
     def configure_from_options
-      config = Configuration.new(@app_path, @options)
-      config.from_options
+      if @options[:config]
+        config = Configuration.new(@path, @options[:config])
+        config.from_options
+      end
     end
   end
 end

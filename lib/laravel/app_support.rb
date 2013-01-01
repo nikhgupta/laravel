@@ -23,7 +23,7 @@ module Laravel
     # +boolean+ :: True, if the app directory is the current directory.
     #
     def create_in_current_directory?
-      is_current_directory?(@app_path)
+      is_current_directory?(@path)
     end
 
     # Check whether the app directory is empty?
@@ -35,7 +35,7 @@ module Laravel
     # +boolean+ :: True, if the app directory is an empty one.
     #
     def create_in_empty_directory?
-      is_empty_directory?(@app_path)
+      is_empty_directory?(@path)
     end
 
     # Check whether the specified source is a local directory or a URL?
@@ -65,7 +65,7 @@ module Laravel
     # +string+ :: path to the configuration file
     #
     def config_file
-      File.join(@app_path, %w[ application config application.php ])
+      File.join(@path, %w[ application config application.php ])
     end
 
     # Return the path to a tasks file by its name
@@ -77,7 +77,7 @@ module Laravel
     # +string+ :: path to the tasks file
     #
     def tasks_file(name)
-      File.expand_path(File.join(@app_path, %w[ application tasks ], name))
+      File.expand_path(File.join(@path, %w[ application tasks ], name))
     end
 
     # check if laravel framework exists in the current application's directory
@@ -88,7 +88,7 @@ module Laravel
     # +boolean+ :: true, if laravel framework exists
     #
     def has_laravel?
-      laravel_exists_in_directory?(@app_path)
+      laravel_exists_in_directory?(@path)
     end
 
     # check if the cache exists for the source specified by the current
@@ -115,7 +115,7 @@ module Laravel
     #
     def required_force_is_missing?
       # we need force if path exists and is not the current directory
-      check_force   = (File.exists?(@app_path) and not create_in_current_directory?)
+      check_force   = (File.exists?(@path) and not create_in_current_directory?)
       # we need force if path is current directory but is not empty
       check_force ||= (create_in_current_directory? and not create_in_empty_directory?)
       # raise an error when we need to force and we have not been supplied with enforcements
@@ -130,8 +130,8 @@ module Laravel
     #
     def apply_force
       show_info "Creating application forcefully!" if @options[:force]
-      FileUtils.rm_rf("#{@app_path}/.", :secure => true) if File.exists?(@app_path) and @options[:force]
-      FileUtils.mkdir_p @app_path
+      FileUtils.rm_rf("#{@path}/.", :secure => true) if File.exists?(@path) and @options[:force]
+      FileUtils.mkdir_p @path
     end
 
     # This method downloads or updates the local cache for the current source.
@@ -167,7 +167,7 @@ module Laravel
     # application.
     #
     def copy_over_cache_files
-      FileUtils.cp_r "#{@cache}/.", @app_path
+      FileUtils.cp_r "#{@cache}/.", @path
     end
 
     # This method updates the permissions on the storage/ directory inside the
@@ -177,7 +177,7 @@ module Laravel
     #
     def update_permissions_on_storage
       if @options[:perms]
-        response = system("chmod -R o+w #{File.join(@app_path, 'storage')}")
+        response = system("chmod -R o+w #{File.join(@path, 'storage')}")
         if response
           say_success "Updated permissions on storage/ directory."
         else
@@ -194,7 +194,7 @@ module Laravel
     # applications based on these 'corrupt' repositories.
     #
     def clean_up
-      FileUtils.rm_rf "#{@app_path}" unless create_in_current_directory?
+      FileUtils.rm_rf "#{@path}" unless create_in_current_directory?
       FileUtils.rm_rf "#{@cache}"
     end
 

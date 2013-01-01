@@ -41,7 +41,6 @@ module Laravel
     def create_test_app(dir = nil, repo = nil)
       dir     = dir ? "." : "my_app"
       dir     = expand_path(dir)
-      repo  ||= Laravel::Helpers::LaravelRepo
       options = { :force => true, :quiet => false, :perms => true, :source => repo }
       Laravel::App.new(dir, options)
     end

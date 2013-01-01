@@ -11,7 +11,7 @@ Given /^local cache for "(.*?)" (does not )?exists?$/ do |repo, negate|
   app = create_test_app nil, repo
   FileUtils.rm_rf app.cache if negate or not app.has_cache?
   # easiest method to ensure local cache exists is to clone repo from github
-  `git clone #{app.source} #{app.cache} &>/dev/null` unless app.has_cache?
+  `git clone -q #{app.source} #{app.cache}` unless app.has_cache?
 end
 
 # no applications have been created => local cache does not exist
@@ -25,7 +25,7 @@ When /^.*create (?:an|this) application(?:| with above requirements)( in the cur
   @app      = create_test_app current_dir, @source
   @config   = @config.chomp(",")
   @args     = "#{@args} --config=#{@config}" unless @config.empty?
-  step "I run `laravel new #{@app.app_path} #{@args}`"
+  step "I run `laravel new #{@app.path} #{@args}`"
 end
 
 # make sure that the application is ready for development
@@ -66,7 +66,7 @@ end
 Then /^file permissions on storage should( not)? be updated$/ do |negate|
   step "the stdout should contain \"Updated permissions\"" unless negate
 
-  storage_dir = File.join(@app.app_path, "storage")
+  storage_dir = File.join(@app.path, "storage")
   # capture the last integer for the permissions mode
   world_bit = sprintf("%o", File.stat(storage_dir).mode).to_s[-1,1].to_i
   # file is world-writable if last integer is 2, 3, 6, or 7
@@ -76,5 +76,3 @@ Then /^file permissions on storage should( not)? be updated$/ do |negate|
   message = "#{storage_dir} to be world-writable"
   unexpected?(actual, expected, message)
 end
-
-

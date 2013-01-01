@@ -26,7 +26,8 @@ end
 # I create 'feature' branches, which I then merge with 'develop' branch.
 # Hence, README.md should be updated with details of the new feature.
 Then /^the readme should( not)? be updated with new information$/ do |negate|
-  actual   = `git diff develop..HEAD -- README.md`.strip
+  last_tag = `git tag | tail -1`.strip
+  actual   = `git diff #{last_tag}..HEAD -- README.md`.strip
   expected = !negate
   message  = "README.md to be updated with new information"
   unexpected? actual, expected, message
@@ -62,8 +63,8 @@ end
 # whenever I leave my desk for some personal work.
 # This quickly reminds me if such commits are present in the commit history.
 Then /^snapshotted git commits should( not)? exist$/ do |negate|
-  snapped  = `git lg develop.. | grep 'snapped'`.strip
-  snapshot = `git lg develop.. | grep 'snapshot'`.strip
+  snapped  = `git log develop.. | grep 'snapped'`.strip
+  snapshot = `git log develop.. | grep 'snapshot'`.strip
   actual   = snapped || snapshot
   expected = !negate
   message  = "commit history to contain snapshots"
