@@ -32,5 +32,5 @@ Feature: Create a new application with maximum customizations
     And   I should see "Cloned"
     And   I should see "Updated permissions"
     And   I should see "Updated configuration: index => __empty_string"
-    And   I should see "Updated configuration: key =>"
+    And   I should see "Updated configuration: key"
     And   I should see "Hurray!"

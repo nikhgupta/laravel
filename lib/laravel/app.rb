@@ -4,7 +4,7 @@ module Laravel
   # AppSupport module, which is being included as a mixin here.
   #
   class App
-    # include the Helpers and AppSupport modules which has all the methods defined.
+    # include the Helpers and AppSupport modules which have all the helper methods defined.
     include Laravel::Helpers
     include Laravel::AppSupport
 
@@ -27,19 +27,37 @@ module Laravel
     def initialize(path = nil, options = nil)
       self.path    = path
       self.options = options
-      self.source  = source
+      self.source  = options[:source] || nil
     end
 
+    # Expands the supplied +path+ for the application so that we have an absolute
+    # directory path to work with.
+    #
+    # ==== Parameters
+    # +path+ :: The path to the laravel based application. If path is not supplied,
+    # we assume the current directory.
+    #
     def path=(path="")
       path = Dir.pwd if not path or path.empty?
       @path = File.expand_path(path)
     end
 
+    # Merge the given options with the already existing options.
+    #
+    # ==== Parameters
+    # +options+ :: a hash of options to merge
+    #
     def options=(options={})
       @options = @options ? @options.merge(options) : options
     end
 
-    def source=(source)
+    # Set the source for this application, and implicitely, set the directory
+    # path for the local cache for this source.
+    #
+    # ==== Parameters
+    # +source+ :: the source url or directory path
+    #
+    def source=(source=nil)
       # source must default to Official Laravel Repository if none is provided
       @source = options[:source] if options
       @source = LaravelRepo if not @source or @source.empty?
@@ -110,7 +128,6 @@ module Laravel
     # This method configures the application as required by the user.
     # It does so by invoking the 'from_options' method of the Configuration class.
     #
-    # FIXME: This is bad code since the Super class knows about its Children
     def configure_from_options
       if @options[:config]
         config = Configuration.new(@path, @options[:config])

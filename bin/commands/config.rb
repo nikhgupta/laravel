@@ -34,7 +34,7 @@ module Laravel
       def update(key, value="")
         begin
           config = Laravel::Configuration.new(options[:app])
-          config.send("update_#{key}", value)
+          config.update key, value
         rescue StandardError => e
           Laravel::handle_error e, options[:debug]
         end
@@ -55,7 +55,7 @@ module Laravel
       def get(key)
         begin
           config = Laravel::Configuration.new(options[:app])
-          config.send("read_#{key}")
+          config.read key
         rescue StandardError => e
           Laravel::handle_error e, options[:debug]
         end

@@ -47,18 +47,6 @@ module Laravel
       File.directory?(@source)
     end
 
-    # Merge the specified options with the options specified on the command line.
-    #
-    # ==== Parameters
-    # +options+ :: hash of options passed at the command line
-    #
-    # ==== Return
-    # +hash+ :: hash of merged options
-    #
-    def merge_options(options)
-      @options.merge!(options)
-    end
-
     # Return the path to the configuration file for the current application
     #
     # ==== Return
