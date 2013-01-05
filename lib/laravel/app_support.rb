@@ -6,6 +6,21 @@ module Laravel
     # include various Laravel Helpers
     include Laravel::Helpers
 
+    # Run a command using 'artisan'
+    #
+    # ==== Parameters
+    # +command+ :: command to run
+    #
+    def artisan(command, options = {})
+      raise LaravelNotFoundError unless laravel_exists_in_directory?(@path)
+      php = `which php`.strip
+      raise RequiredLibraryMissingError, "php" unless php
+      command = "#{php} #{@path}/artisan #{command}"
+      output = `#{command}`
+      puts output unless options[:quiet]
+      ($?.exitstatus == 0)
+    end
+
     # Return the path to the local cache directory for a given Source
     #
     # ==== Return

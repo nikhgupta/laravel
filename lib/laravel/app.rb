@@ -27,7 +27,8 @@ module Laravel
     def initialize(path = nil, options = nil)
       self.path    = path
       self.options = options
-      self.source  = options[:source] || nil
+      self.source  = options[:source] if options
+      self.source  = LaravelRepo if not @source
     end
 
     # Expands the supplied +path+ for the application so that we have an absolute

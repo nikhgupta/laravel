@@ -54,6 +54,24 @@ module Laravel
       # puts "Made possible by efforts of Laravel Community"
     end
 
+    # run an artisan command using this gem
+    #
+    # +command+ :: command to run using artisan
+    #
+    method_option :app, :type => :string, :aliases => "-a",
+      :desc => "use the specified Laravel application instead of curernt directory"
+    method_option :debug, :type => :boolean
+    desc "do [COMMAND]", "run an 'artisan' command"
+    def do(*args)
+      begin
+        command = args.join ' '
+        app = Laravel::App.new options[:app]
+        app.artisan command
+      rescue StandardError => e
+        Laravel::handle_error e, options[:debug]
+      end
+    end
+
   end
 end
 

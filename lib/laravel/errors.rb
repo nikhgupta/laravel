@@ -31,7 +31,7 @@ module Laravel
       puts "--"
       puts error.backtrace
     end
-    exit
+    exit 128
   end
 
 end
