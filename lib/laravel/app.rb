@@ -74,8 +74,7 @@ module Laravel
     # cache for the given source, and then copies over the files from this
     # cache to the specified directory. Finally, it checks if we have a working
     # Laravel application at which point it either raises and error and cleans
-    # up, or configures the application and installs tasks/bundles, as
-    # requested.
+    # up, or configures the application, as requested.
     #
     def create
       # check if we are missing the required force
@@ -101,9 +100,6 @@ module Laravel
         # configure this new application, as required
         configure_from_options
 
-        # download goodies for this new application, as specified
-        install_from_options
-
         say_success "Hurray! Your Laravel application has been created!"
       else
         say_failed "Downloaded source is not Laravel framework or its fork."
@@ -112,17 +108,6 @@ module Laravel
         clean_up
         # raise an error since we failed.. :(
         raise LaravelError, "Source for downloading repository is corrupt!"
-      end
-    end
-
-    # This method installs the required tasks/bundles by the user.
-    # It does so by invoking the 'from_options' method of the Installer class.
-    #
-    # FIXME: This is bad code since the Super class knows about its Children
-    def install_from_options
-      if @options[:install]
-        installer = Installer.new(@path, @options[:install])
-        installer.from_options
       end
     end
 

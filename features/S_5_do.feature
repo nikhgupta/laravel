@@ -8,6 +8,7 @@ Feature: Run artisan commands via gem
     When  I create this application
     Then  the application should be ready for development
 
+  @php
   Scenario: run application tests using artisan
     When  I run `laravel do test` inside this application
     Then  I should see "PHPUnit"

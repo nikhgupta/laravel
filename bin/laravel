@@ -14,7 +14,6 @@ require "laravel" # which indirectly requires 'thor'
 # require our commands
 require "commands/new"
 require "commands/config"
-require "commands/install"
 
 module Laravel
   # A means to create and manage applications based on the Laravel
@@ -34,13 +33,6 @@ module Laravel
     #
     desc "config [COMMAND]", "configure an existing application"
     subcommand "config", Laravel::Commands::Config
-
-    # install subcommand that gets us some bundles and goodies
-    #
-    # +command+ :: subcommand to run.
-    #
-    desc "install [COMMAND]", "install bundles and other goodies"
-    subcommand "install", Laravel::Commands::Install
 
     # display version information for this gem but is a hidden task,
     # which means that it will not be shown in the 'help' overview.

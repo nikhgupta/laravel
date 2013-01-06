@@ -91,7 +91,6 @@ application key by, simply, passing `key` instead of `key:some_fixed_key`.
     <del>laravel new my_app --config:key                # generate a new key</del>
     laravel new my_app --[no-]generator     # download the Laravel Generator by Jeffrey Way
     laravel new my_app --database=db_my_app # create a database, defaults to app name
-    laravel new my_app --bundles=sentry,bob # install the provided bundles
 
 ## Contributing
 

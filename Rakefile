@@ -4,7 +4,7 @@ require 'cucumber/rake/task'
 
 # setup some default rake tasks using cucumber
 Cucumber::Rake::Task.new(:features) do |t|
-    t.cucumber_opts = "features --format pretty"
+    t.cucumber_opts = "features --format progress --tags=~@php"
 end
 
 task :default => :features
