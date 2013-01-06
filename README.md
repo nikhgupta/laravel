@@ -1,15 +1,34 @@
 # Laravel
 
-A wrapper around Laravel framework for PHP.
-Currently, is only capable of downloading Laravel source from
-a local directory, some git based (online/offline) repository
-or from the official source on Github.
-Still in development.
-
 [![Code
 Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nikhgupta/laravel)
 | [![Dependency
 Status](https://gemnasium.com/nikhgupta/laravel.png)](https://gemnasium.com/nikhgupta/laravel) | [![Build Status](https://travis-ci.org/nikhgupta/laravel.png?branch=master)](https://travis-ci.org/nikhgupta/laravel)
+
+A gem that helps in easy installation of new applications based on Laravel framework for PHP.
+
+- Create a new Laravel application
+  - using source from official repository
+  - using source from your own fork of Laravel
+- Caches the downloaded source for faster installations, in future.
+- Configure the application, as neeed (e.g. turn on the profiler, set application index to empty)
+- Updates permissions on the storage directory
+
+So, effectively, I can give a command like:
+
+    laravel new my_app --config=index:'',key,ssl:enabled --source=http://github.com/laravel/pastes
+
+to create a new Laravel application which:
+
+- uses http://github.com/laravel/pastes as source
+- updates permissions on the storage/ directory
+- sets the application index to blank
+- generates a random new application key
+- enables the 'ssl' support in application/config/application.php
+- makes future installs from this repository faster by caching this source
+
+Currently, it is capable of creating new Laravel application based on the official source, or a fork and can even use source from a local directory. Further, it can configure the application, as required.
+
 ## Installation
 
 Add this line to your application's Gemfile:
