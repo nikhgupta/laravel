@@ -32,8 +32,6 @@ module Laravel
       :desc => "default | update permissions on storage/ directory"
     method_option :config,  :type => :string,  :aliases => "-c",
       :desc => "configure the application using semi-colon separated list (read docs)"
-    method_option :generator, :type => :boolean, :aliases => "-g",
-      :desc => "get the Laravel generator by Jeffrey Way"
     method_option :debug, :type => :boolean
 
     def new(app_name)
